@@ -7,16 +7,16 @@
     <!-- Font Akademik: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- Quill.js Rich Text Editor CSS -->
+    <!-- Quill.js Rich Text Editor (Diubah: tanpa defer agar pasti termuat sebelum Vue) -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
     
     <!-- CDN SCRIPT -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
-    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js" defer></script>
     
     <script>
         tailwind.config = { 
@@ -24,7 +24,8 @@
                 extend: { 
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        edu: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e' }
+                        edu: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e' },
+                        modern: { bg: '#f4f7f9', card: '#ffffff' }
                     }
                 } 
             } 
@@ -34,529 +35,800 @@
         /* EDU PORTAL CSS LOADER */
         #app[v-cloak] {
             display: flex !important; align-items: center; justify-content: center; flex-direction: column;
-            background-color: #f8fafc; position: fixed; inset: 0; z-index: 99999;
+            background-color: #f4f7f9; position: fixed; inset: 0; z-index: 99999;
         }
         #app[v-cloak] > * { display: none !important; }
         #app[v-cloak]::before {
-            content: ''; width: 40px; height: 40px; border: 4px solid #e0f2fe; border-top-color: #0284c7;
+            content: ''; width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: #0f172a;
             border-radius: 50%; animation: e-spin 1s linear infinite; margin-bottom: 20px;
         }
-        #app[v-cloak]::after { content: "Memuat Edu-Portal..."; font-family: 'Inter', sans-serif; font-weight: 700; color: #0c4a6e; font-size: 13px; }
+        #app[v-cloak]::after { content: "Memuat Ruang Kerja..."; font-family: 'Inter', sans-serif; font-weight: 700; color: #0f172a; font-size: 13px; }
         @keyframes e-spin { to { transform: rotate(360deg); } }
 
-        /* CORE STYLES */
-        body { background-color: #f1f5f9; color: #334155; -webkit-tap-highlight-color: transparent; margin: 0; overflow: hidden; }
+        /* MODERN CORE STYLES */
+        body { background-color: #f4f7f9; color: #334155; -webkit-tap-highlight-color: transparent; margin: 0; overflow: hidden; }
 
-        .edu-card { background: #ffffff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: 1px solid #e2e8f0; border-radius: 1rem; }
-        .edu-input { background: #f8fafc; border: 1px solid #cbd5e1; color: #1e293b; border-radius: 0.5rem; transition: all 0.2s; padding: 0.75rem 1rem; }
-        .edu-input:focus { background: #ffffff; border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15); outline: none; }
-        .edu-btn { background: #ffffff; border: 1px solid #cbd5e1; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); cursor: pointer; border-radius: 0.5rem; transition: all 0.2s; font-weight: 600; padding: 0.5rem 1rem; }
-        .edu-btn:hover { background: #f8fafc; border-color: #94a3b8; }
-        .edu-btn-primary { background: #0284c7; color: white; border-color: transparent; }
-        .edu-btn-primary:hover { background: #0369a1; }
-
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        /* QUILL EDITOR OVERRIDES FULL PAGE */
-        .ql-toolbar.ql-snow { border: 1px solid #cbd5e1 !important; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; background: #f8fafc; font-family: 'Inter', sans-serif; }
-        .ql-container.ql-snow { border: 1px solid #cbd5e1 !important; border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem; border-top: none !important; font-family: 'Inter', sans-serif; font-size: 1rem; background: #ffffff; }
-        .ql-editor { min-height: 400px; line-height: 1.7; }
+        .edu-card { 
+            background: #ffffff; 
+            border: 1px solid rgba(226, 232, 240, 0.6); 
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04); 
+            border-radius: 1.25rem; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease; 
+        }
+        .edu-input { 
+            background: #f8fafc; 
+            border: 1px solid #e2e8f0; 
+            color: #1e293b; 
+            border-radius: 0.75rem; 
+            transition: all 0.2s; 
+            padding: 0.75rem 1.25rem; 
+            font-weight: 500;
+        }
+        .edu-input:focus { 
+            background: #ffffff; 
+            border-color: #0ea5e9; 
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1); 
+            outline: none; 
+        }
         
-        .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
-        .fade-enter-from, .fade-leave-to { opacity: 0; }
+        /* WP STYLE TITLE INPUT */
+        .wp-title-input {
+            width: 100%; background: transparent; border: none; border-bottom: 2px solid transparent;
+            font-size: 2.25rem; font-weight: 800; color: #0f172a; padding: 0.5rem 0; margin-bottom: 0.5rem;
+            transition: all 0.2s; line-height: 1.2;
+        }
+        .wp-title-input::placeholder { color: #cbd5e1; }
+        .wp-title-input:focus { outline: none; border-bottom-color: #0ea5e9; }
+
+        .edu-btn { 
+            background: #ffffff; 
+            border: 1px solid #e2e8f0; 
+            box-shadow: 0 2px 4px 0 rgba(15, 23, 42, 0.02); 
+            cursor: pointer; 
+            border-radius: 0.75rem; 
+            transition: all 0.2s ease; 
+            font-weight: 600; 
+            padding: 0.5rem 1.25rem; 
+        }
+        .edu-btn:hover { background: #f8fafc; border-color: #cbd5e1; box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05); }
+        .edu-btn-primary { background: #0f172a; color: white; border-color: transparent; box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15); }
+        .edu-btn-primary:hover { background: #1e293b; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(15, 23, 42, 0.2); }
+        .edu-btn-danger { background: #fee2e2; color: #dc2626; border-color: transparent; }
+        .edu-btn-danger:hover { background: #fecaca; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+        /* QUILL EDITOR - WP Style Override (Menjamin kotak editor lebar & besar) */
+        .ql-toolbar.ql-snow { border: none !important; border-bottom: 1px solid #e2e8f0 !important; background: #f8fafc; border-top-left-radius: 1rem; border-top-right-radius: 1rem; font-family: 'Inter', sans-serif; padding: 0.75rem 1rem; }
+        .ql-container.ql-snow { border: none !important; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem; font-family: 'Inter', sans-serif; font-size: 1.05rem; background: #ffffff; }
+        .ql-editor { min-height: 450px; line-height: 1.8; padding: 1.5rem; color: #334155; }
+        .ql-editor p { margin-bottom: 1rem; }
+        
+        /* TRANSITIONS & SLIDER */
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease, transform 0.3s ease; }
+        .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(10px); }
+        
+        .slider-enter-active, .slider-leave-active { transition: opacity 0.8s ease; position: absolute; width: 100%; height: 100%; }
+        .slider-enter-from, .slider-leave-to { opacity: 0; }
+        
+        .dropdown-enter-active, .dropdown-leave-active { transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .dropdown-enter-from, .dropdown-leave-to { opacity: 0; transform: scale(0.95) translateY(-10px); }
+
+        /* MASONRY GALLERY */
+        .masonry-grid { columns: 2; column-gap: 1rem; }
+        @media (min-width: 768px) { .masonry-grid { columns: 3; } }
+        @media (min-width: 1024px) { .masonry-grid { columns: 4; } }
+        .masonry-item { break-inside: avoid; margin-bottom: 1rem; }
     </style>
 </head>
 <body class="font-sans antialiased h-screen overflow-hidden text-slate-700">
 
-    <div id="app" v-cloak class="flex h-full w-full relative">
+    <div id="app" v-cloak class="flex flex-col h-full w-full relative bg-modern-bg">
         
         <!-- TOAST NOTIFICATION -->
-        <transition name="fade">
-            <div v-if="toast.show" class="fixed top-4 right-4 z-[9999] px-4 py-3 rounded-lg edu-card shadow-xl flex items-center gap-3 border-l-4" :class="toast.type === 'error' ? 'border-l-red-500' : 'border-l-emerald-500'">
-                <i :class="[toast.type === 'error' ? 'ph-warning-circle text-red-500' : 'ph-check-circle text-emerald-500', 'ph-fill text-xl']"></i>
-                <span class="font-semibold text-sm">{{ toast.message }}</span>
+        <transition name="dropdown">
+            <div v-if="toast.show" class="fixed top-24 left-1/2 -translate-x-1/2 z-[9999] px-5 py-3 rounded-xl edu-card shadow-xl flex items-center gap-3 border" :class="toast.type === 'error' ? 'border-red-200 bg-red-50' : 'border-emerald-200 bg-emerald-50'">
+                <i :class="[toast.type === 'error' ? 'ph-warning-circle text-red-500' : 'ph-check-circle text-emerald-500', 'ph-fill text-2xl']"></i>
+                <span class="font-bold text-sm" :class="toast.type === 'error' ? 'text-red-800' : 'text-emerald-800'">{{ toast.message }}</span>
             </div>
         </transition>
 
         <!-- LOGIN SCREEN -->
-        <div v-if="!currentUser && route === 'login'" class="w-full h-full flex items-center justify-center absolute inset-0 z-50 bg-slate-100">
-            <div class="edu-card p-8 w-full max-w-sm mx-4 flex flex-col items-center">
-                <div class="w-16 h-16 rounded-full bg-edu-100 text-edu-600 flex items-center justify-center mb-4">
-                    <img v-if="identitasLembaga.logo" :src="identitasLembaga.logo" class="w-10 h-10 object-contain">
+        <div v-if="!currentUser && route === 'login'" class="w-full h-full flex items-center justify-center absolute inset-0 z-50 bg-slate-50/80 backdrop-blur-sm">
+            <div class="edu-card p-10 w-full max-w-sm mx-4 flex flex-col items-center shadow-2xl shadow-slate-200/50 border-white">
+                <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 text-white flex items-center justify-center mb-6 shadow-lg shadow-slate-900/20">
+                    <img v-if="identitasLembaga.logo" :src="identitasLembaga.logo" class="w-12 h-12 object-contain filter brightness-0 invert">
                     <i v-else class="ph-fill ph-graduation-cap text-4xl"></i>
                 </div>
-                <h1 class="text-xl font-bold text-center mb-1">{{ identitasLembaga.nama || 'Edu-Portal' }}</h1>
-                <p class="text-xs text-slate-500 mb-6 uppercase tracking-wider font-semibold">Login Administrator</p>
-                <form @submit.prevent="handleLogin" class="space-y-4 w-full">
+                <h1 class="text-2xl font-extrabold text-center mb-1 text-slate-900">{{ identitasLembaga.nama || 'Edu-Portal' }}</h1>
+                <p class="text-xs text-slate-500 mb-8 uppercase tracking-widest font-bold">Akses Kredensial Internal</p>
+                
+                <form @submit.prevent="handleLogin" class="space-y-5 w-full">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">ID Pengguna</label>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">ID Pengguna</label>
                         <input v-model="loginForm.username" type="text" required class="w-full edu-input">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Kata Sandi</label>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Kata Sandi</label>
                         <input v-model="loginForm.password" type="password" required class="w-full edu-input">
                     </div>
-                    <button type="submit" :disabled="isActionLoading" class="w-full edu-btn edu-btn-primary flex justify-center items-center gap-2 mt-2">
-                        <i v-if="isActionLoading" class="ph-bold ph-spinner animate-spin"></i>
-                        {{ isActionLoading ? 'Memverifikasi...' : 'Masuk Sistem' }}
+                    <button type="submit" :disabled="isActionLoading" class="w-full edu-btn edu-btn-primary py-3.5 text-sm flex justify-center items-center gap-2 mt-4">
+                        <i v-if="isActionLoading" class="ph-bold ph-spinner animate-spin text-lg"></i>
+                        {{ isActionLoading ? 'Memverifikasi...' : 'Masuk Sekarang' }}
                     </button>
-                    <button type="button" @click="navigate('home')" class="w-full mt-2 text-slate-500 text-xs hover:text-edu-600 transition text-center">Kembali ke Web Publik</button>
+                    <button type="button" @click="navigate('home')" class="w-full mt-4 text-slate-400 text-xs font-bold hover:text-slate-800 transition text-center flex justify-center items-center gap-1">
+                        <i class="ph-bold ph-arrow-left"></i> Kembali ke Publik
+                    </button>
                 </form>
             </div>
         </div>
 
         <!-- MAIN APP SHELL -->
         <template v-else>
-            <!-- SIDEBAR -->
-            <div v-if="isMobileMenuOpen" @click="isMobileMenuOpen = false" class="fixed inset-0 bg-slate-900/50 z-[60] md:hidden"></div>
-
-            <aside :class="['fixed inset-y-0 left-0 z-[70] w-64 bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 md:relative md:translate-x-0', isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full']">
-                <div class="p-5 flex items-center gap-3 border-b border-slate-100">
-                    <div class="w-8 h-8 bg-edu-100 rounded text-edu-600 flex items-center justify-center">
-                        <i class="ph-bold ph-graduation-cap text-xl"></i>
-                    </div>
-                    <div class="overflow-hidden">
-                        <h2 class="font-bold text-sm text-slate-800 truncate">{{ identitasLembaga.nama || 'Edu-Portal' }}</h2>
-                        <p class="text-[10px] text-slate-500 truncate">{{ identitasLembaga.npsn ? 'NPSN: '+identitasLembaga.npsn : 'Sistem Terpadu' }}</p>
-                    </div>
-                    <button @click="isMobileMenuOpen = false" class="ml-auto text-slate-400 md:hidden"><i class="ph-bold ph-x text-lg"></i></button>
-                </div>
-
-                <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 mt-2 px-3">Halaman Publik</div>
-                    <button @click="navigate('home'); isMobileMenuOpen=false;" :class="['w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors', route === 'home' ? 'bg-edu-50 text-edu-700' : 'text-slate-600 hover:bg-slate-50']">
-                        <i class="ph-fill ph-house text-lg"></i> Beranda Web
-                    </button>
-                    <button @click="navigate('viewer'); isMobileMenuOpen=false;" :class="['w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors', route === 'viewer' ? 'bg-edu-50 text-edu-700' : 'text-slate-600 hover:bg-slate-50']">
-                        <i class="ph-fill ph-table text-lg"></i> Pusat Data
-                    </button>
-
-                    <template v-if="currentUser">
-                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 mt-6 px-3">Area Internal</div>
-                        <button @click="navigate('dashboard'); isMobileMenuOpen=false;" :class="['w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors', route === 'dashboard' ? 'bg-edu-50 text-edu-700' : 'text-slate-600 hover:bg-slate-50']">
-                            <i class="ph-fill ph-squares-four text-lg"></i> Dasbor Admin
-                        </button>
-                        <button @click="navigate('cms'); isMobileMenuOpen=false;" :class="['w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors', ['cms', 'cms-editor'].includes(route) ? 'bg-edu-50 text-edu-700' : 'text-slate-600 hover:bg-slate-50']">
-                            <i class="ph-fill ph-article text-lg"></i> Kelola Konten & CPT
-                        </button>
-                        <button v-if="currentUser.role === 'admin'" @click="navigate('settings'); isMobileMenuOpen=false;" :class="['w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors', route === 'settings' ? 'bg-edu-50 text-edu-700' : 'text-slate-600 hover:bg-slate-50']">
-                            <i class="ph-fill ph-gear text-lg"></i> Setelan Database
-                        </button>
-                    </template>
-                </nav>
-
-                <div class="p-4 border-t border-slate-100">
-                    <button v-if="!currentUser" @click="navigate('login'); isMobileMenuOpen=false;" class="w-full edu-btn flex items-center justify-center gap-2 text-edu-600">
-                        <i class="ph-bold ph-sign-in"></i> Login Admin
-                    </button>
-                    <div v-else class="flex items-center justify-between px-2">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-xs">{{ currentUser.username.charAt(0).toUpperCase() }}</div>
-                            <div class="text-xs">
-                                <p class="font-bold text-slate-700">{{ currentUser.username }}</p>
-                                <p class="text-[10px] text-slate-500 uppercase">{{ currentUser.role }}</p>
+            <div id="main-scroller" class="flex-1 overflow-y-auto w-full relative scroll-smooth bg-[#f4f7f9] flex flex-col">
+                
+                <!-- MODERN FLOATING HEADER -->
+                <div class="sticky top-4 z-[100] px-4 w-full max-w-7xl mx-auto transition-transform duration-300">
+                    <header class="bg-white/90 backdrop-blur-xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl px-4 md:px-6 py-3 flex items-center justify-between">
+                        
+                        <!-- Identitas Kiri -->
+                        <div class="flex items-center gap-3 cursor-pointer group" @click="navigate('home')">
+                            <div class="w-10 h-10 bg-gradient-to-br from-edu-500 to-edu-700 rounded-xl text-white flex items-center justify-center shadow-md shadow-edu-500/20 group-hover:scale-105 transition-transform">
+                                <img v-if="identitasLembaga.logo" :src="identitasLembaga.logo" class="w-6 h-6 object-contain filter brightness-0 invert">
+                                <i v-else class="ph-bold ph-graduation-cap text-xl"></i>
+                            </div>
+                            <div class="hidden lg:block">
+                                <h2 class="font-extrabold text-sm text-slate-800 leading-tight tracking-tight">{{ identitasLembaga.nama || 'Edu-Portal' }}</h2>
+                                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{{ identitasLembaga.npsn ? 'NPSN: '+identitasLembaga.npsn : 'Sistem Terpadu' }}</p>
                             </div>
                         </div>
-                        <button @click="handleLogout" class="text-slate-400 hover:text-red-500"><i class="ph-bold ph-sign-out text-lg"></i></button>
-                    </div>
+
+                        <!-- Navigasi Dinamis (Tengah) -->
+                        <nav class="hidden md:flex flex-wrap items-center justify-center gap-1 bg-slate-100/60 p-1 rounded-xl border border-slate-200/50 max-w-2xl overflow-hidden">
+                            <button v-for="(menu, idx) in appConfig.menus" :key="idx" @click="handleNavClick(menu.url)" class="px-3 lg:px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 text-slate-600 hover:text-slate-900 hover:bg-white shadow-sm hover:shadow">
+                                {{ menu.label }}
+                            </button>
+                            
+                            <template v-if="currentUser">
+                                <div class="w-px h-4 bg-slate-300 mx-1"></div>
+                                <button @click="navigate('dashboard')" :class="['px-3 lg:px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300', route === 'dashboard' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/50']">Dasbor</button>
+                                <button @click="navigate('cms')" :class="['px-3 lg:px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300', ['cms', 'cms-editor'].includes(route) ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/50']">CMS</button>
+                                <button v-if="currentUser.role === 'admin'" @click="navigate('settings')" :class="['px-3 lg:px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300', route === 'settings' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/50']"><i class="ph-bold ph-gear"></i></button>
+                            </template>
+                        </nav>
+
+                        <!-- Aksi / Mobile Toggle (Kanan) -->
+                        <div class="flex items-center gap-3">
+                            <template v-if="!currentUser">
+                                <button @click="navigate('login')" class="hidden md:flex items-center gap-2 px-5 py-2.5 edu-btn-primary rounded-xl text-xs font-bold">
+                                    Login Admin <i class="ph-bold ph-sign-in text-sm"></i>
+                                </button>
+                            </template>
+                            <template v-else>
+                                <div class="hidden md:flex items-center gap-3 pl-3 border-l border-slate-200">
+                                    <button @click="handleLogout" class="w-9 h-9 rounded-full bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-600 flex items-center justify-center font-bold transition-colors" title="Keluar">
+                                        <i class="ph-bold ph-power text-lg"></i>
+                                    </button>
+                                </div>
+                            </template>
+                            
+                            <!-- Mobile Menu Button -->
+                            <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
+                                <i :class="isMobileMenuOpen ? 'ph-bold ph-x text-lg' : 'ph-bold ph-list text-lg'"></i>
+                            </button>
+                        </div>
+                    </header>
+
+                    <!-- Mobile Dropdown Menu -->
+                    <transition name="dropdown">
+                        <div v-if="isMobileMenuOpen" class="absolute top-[4.5rem] left-4 right-4 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200/50 p-3 md:hidden flex flex-col gap-1 z-50">
+                            
+                            <!-- Menu Dinamis Mobile -->
+                            <div class="px-3 py-1 mb-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Navigasi Publik</div>
+                            <button v-for="(menu, idx) in appConfig.menus" :key="'mob-'+idx" @click="handleNavClick(menu.url); isMobileMenuOpen=false" class="text-left px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-600 hover:bg-slate-50">
+                                {{ menu.label }}
+                            </button>
+                            
+                            <template v-if="currentUser">
+                                <div class="h-px bg-slate-100 my-2 mx-2"></div>
+                                <div class="px-4 py-1 mb-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Area Internal</div>
+                                <button @click="navigate('dashboard'); isMobileMenuOpen=false" :class="['text-left px-4 py-3 rounded-xl text-sm font-bold transition-all', route === 'dashboard' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50']"><i class="ph-bold ph-squares-four mr-2 text-lg align-text-bottom"></i> Dasbor</button>
+                                <button @click="navigate('cms'); isMobileMenuOpen=false" :class="['text-left px-4 py-3 rounded-xl text-sm font-bold transition-all', ['cms','cms-editor'].includes(route) ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50']"><i class="ph-bold ph-article mr-2 text-lg align-text-bottom"></i> Manajemen CPT</button>
+                                <button v-if="currentUser.role === 'admin'" @click="navigate('settings'); isMobileMenuOpen=false" :class="['text-left px-4 py-3 rounded-xl text-sm font-bold transition-all', route === 'settings' ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50']"><i class="ph-bold ph-gear mr-2 text-lg align-text-bottom"></i> Setelan Database</button>
+                                <div class="h-px bg-slate-100 my-2 mx-2"></div>
+                                <button @click="handleLogout" class="text-left px-4 py-3 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 mt-1"><i class="ph-bold ph-sign-out mr-2 text-lg align-text-bottom"></i> Keluar ({{ currentUser.username }})</button>
+                            </template>
+                            <template v-else>
+                                <button @click="navigate('login'); isMobileMenuOpen=false" class="text-center px-4 py-3.5 mt-2 edu-btn-primary rounded-xl text-sm font-bold"><i class="ph-bold ph-lock-key mr-2 align-text-bottom"></i> Login Administrator</button>
+                            </template>
+                        </div>
+                    </transition>
                 </div>
-            </aside>
 
-            <!-- MAIN CONTENT AREA -->
-            <main id="main-scroller" class="flex-1 overflow-y-auto bg-slate-50 flex flex-col relative w-full h-full">
-                
-                <!-- MOBILE HEADER -->
-                <header class="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-40">
-                    <div class="flex items-center gap-2 font-bold text-edu-700">
-                        <i class="ph-fill ph-graduation-cap text-xl"></i> Edu-Portal
-                    </div>
-                    <button @click="isMobileMenuOpen = true" class="text-slate-600"><i class="ph-bold ph-list text-2xl"></i></button>
-                </header>
-
-                <div class="flex-1 w-full p-4 md:p-8">
+                <!-- MAIN CONTENT AREA -->
+                <main class="w-full max-w-7xl mx-auto p-4 md:p-6 mt-4 md:mt-6 flex-1">
                     <transition name="fade" mode="out-in">
                         
                         <!-- ROUTE: HOME (Tampilan Edu-Portal Publik) -->
-                        <div v-if="route === 'home'" class="max-w-6xl mx-auto space-y-8">
-                            <!-- Hero / Identitas -->
-                            <div class="edu-card bg-gradient-to-r from-edu-900 to-edu-700 text-white overflow-hidden relative">
-                                <!-- Background Image (ambil dari salah satu fasilitas jika ada) -->
-                                <img v-if="fasilitasItems.length > 0" :src="fasilitasItems[0].imageUrl || getGalleryCover(fasilitasItems[0])" class="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-overlay">
+                        <div v-if="route === 'home'" class="w-full space-y-12 pb-10">
+                            
+                            <!-- 1. HERO SLIDER SECTION -->
+                            <div class="edu-card overflow-hidden relative h-[400px] md:h-[500px] border-0 bg-slate-900 rounded-3xl" @mouseenter="pauseSlider" @mouseleave="startSlider" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">
+                                <transition-group name="slider">
+                                    <div v-for="(slide, index) in (sliderItems.length > 0 ? sliderItems : mockSlider)" :key="slide.id || index" v-show="currentSlide === index" class="absolute inset-0 w-full h-full cursor-pointer" @click="slide.redirectUrl ? handleNavClick(slide.redirectUrl) : null">
+                                        <div class="absolute inset-0 bg-slate-900/40 mix-blend-multiply z-10"></div>
+                                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10"></div>
+                                        <img :src="slide.imageUrl" class="w-full h-full object-cover transform scale-105 transition-transform duration-[10000ms] ease-out hover:scale-100" @error="$event.target.src='https://placehold.co/1200x600/0f172a/ffffff?text=Slide+Banner'">
+                                        
+                                        <div class="absolute bottom-10 left-8 right-8 md:bottom-16 md:left-16 md:right-16 z-20">
+                                            <span v-if="slide.category" class="inline-block px-3 py-1 bg-edu-500 text-white text-[10px] font-bold rounded-md uppercase tracking-widest mb-3 shadow-lg">{{ slide.category }}</span>
+                                            <h2 class="text-3xl md:text-5xl font-black text-white leading-tight drop-shadow-lg mb-4 max-w-3xl">{{ slide.title }}</h2>
+                                            <p v-if="slide.content" class="text-slate-200 text-sm md:text-base max-w-2xl line-clamp-2 drop-shadow-md hidden sm:block" v-html="slide.content.replace(/<[^>]*>?/gm, '')"></p>
+                                        </div>
+                                    </div>
+                                </transition-group>
                                 
-                                <div class="relative z-10 p-8 md:p-12 flex flex-col md:flex-row items-center md:items-start gap-6">
-                                    <div class="w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl p-2 shadow-lg flex-shrink-0">
-                                        <img v-if="identitasLembaga.logo" :src="identitasLembaga.logo" class="w-full h-full object-contain">
-                                        <div v-else class="w-full h-full bg-slate-100 rounded-xl flex items-center justify-center text-edu-300"><i class="ph-fill ph-buildings text-5xl"></i></div>
-                                    </div>
-                                    <div class="text-center md:text-left flex-1">
-                                        <span v-if="identitasLembaga.npsn" class="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-bold tracking-wider mb-3">NPSN: {{ identitasLembaga.npsn }}</span>
-                                        <h1 class="text-3xl md:text-5xl font-extrabold mb-3 leading-tight">{{ identitasLembaga.nama || 'Sistem Informasi Lembaga' }}</h1>
-                                        <p class="text-edu-100 flex items-center justify-center md:justify-start gap-2 text-sm max-w-2xl"><i class="ph-fill ph-map-pin"></i> {{ identitasLembaga.alamat || 'Alamat lembaga belum diatur.' }}</p>
-                                    </div>
+                                <button v-if="(sliderItems.length > 0 ? sliderItems : mockSlider).length > 1" @click.stop="prevSlide" class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/40 transition-colors z-30 hidden md:flex"><i class="ph-bold ph-caret-left text-xl"></i></button>
+                                <button v-if="(sliderItems.length > 0 ? sliderItems : mockSlider).length > 1" @click.stop="nextSlide" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/40 transition-colors z-30 hidden md:flex"><i class="ph-bold ph-caret-right text-xl"></i></button>
+                                
+                                <div v-if="(sliderItems.length > 0 ? sliderItems : mockSlider).length > 1" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+                                    <button v-for="(_, idx) in (sliderItems.length > 0 ? sliderItems : mockSlider)" :key="'dot-'+idx" @click.stop="setSlide(idx)" :class="['w-2 h-2 rounded-full transition-all', currentSlide === idx ? 'bg-white w-6' : 'bg-white/50 hover:bg-white/80']"></button>
                                 </div>
                             </div>
 
+                            <!-- 2. PROFIL, AGENDA & BERITA UTAMA -->
                             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                <!-- Kolom Kiri: Sambutan & Pengumuman -->
                                 <div class="lg:col-span-1 space-y-8">
                                     <!-- Profil Kepsek -->
-                                    <div v-if="kepsekData.title" class="edu-card p-6 text-center relative overflow-hidden">
-                                        <div class="h-20 bg-edu-100 absolute top-0 left-0 right-0"></div>
-                                        <img :src="kepsekData.imageUrl || 'https://placehold.co/400x400/e2e8f0/64748b?text=Foto'" class="w-24 h-24 rounded-full border-4 border-white shadow-md mx-auto relative z-10 object-cover mt-4 mb-4">
-                                        <h3 class="font-bold text-slate-800 text-lg">{{ kepsekData.title }}</h3>
-                                        <p class="text-xs text-edu-600 font-bold uppercase mb-4">{{ kepsekData.metaDataObj?.jabatan || 'Kepala Lembaga' }}</p>
-                                        <div class="text-sm text-slate-600 italic line-clamp-4" v-html="kepsekData.content"></div>
-                                        <button @click="openArticle(kepsekData.id)" class="mt-4 text-xs font-bold text-edu-600 hover:underline">Baca Selengkapnya</button>
+                                    <div v-if="kepsekData.title" class="edu-card p-8 text-center relative overflow-hidden bg-gradient-to-b from-white to-slate-50">
+                                        <div class="w-24 h-24 mx-auto mb-5 rounded-full p-1 bg-gradient-to-tr from-edu-500 to-emerald-400">
+                                            <img :src="kepsekData.imageUrl || 'https://placehold.co/400x400/e2e8f0/64748b?text=Foto'" class="w-full h-full rounded-full border-4 border-white object-cover">
+                                        </div>
+                                        <h3 class="font-extrabold text-slate-800 text-lg">{{ kepsekData.title }}</h3>
+                                        <p class="text-[10px] text-edu-600 font-bold uppercase tracking-widest mb-4 mt-1">{{ kepsekData.metaDataObj?.jabatan || 'Kepala Lembaga' }}</p>
+                                        <div class="text-sm text-slate-600 leading-relaxed italic line-clamp-4 font-medium" v-html="kepsekData.content"></div>
+                                        <button @click="openArticle(kepsekData.id)" class="mt-5 text-xs font-bold text-slate-800 border-b-2 border-edu-500 pb-0.5 hover:text-edu-600 transition-colors">Profil Lengkap</button>
                                     </div>
 
                                     <!-- Agenda -->
-                                    <div class="edu-card p-0 overflow-hidden">
-                                        <div class="bg-slate-800 text-white p-4 font-bold flex items-center gap-2"><i class="ph-bold ph-calendar"></i> Agenda Akademik</div>
-                                        <div class="divide-y divide-slate-100">
-                                            <div v-if="agendaItems.length === 0" class="p-4 text-center text-sm text-slate-500">Belum ada agenda.</div>
-                                            <div v-for="agenda in agendaItems.slice(0,4)" :key="agenda.id" class="p-4 flex gap-4">
-                                                <div class="w-12 h-12 bg-edu-50 rounded-lg flex flex-col items-center justify-center text-edu-700 flex-shrink-0 border border-edu-100">
-                                                    <span class="text-xs font-bold">{{ new Date(agenda.metaDataObj?.tanggalMulai || agenda.date).getDate() }}</span>
-                                                    <span class="text-[10px] uppercase">{{ new Date(agenda.metaDataObj?.tanggalMulai || agenda.date).toLocaleString('id-ID', {month:'short'}) }}</span>
+                                    <div class="edu-card overflow-hidden">
+                                        <div class="bg-slate-50 border-b border-slate-100 p-5 font-extrabold text-slate-800 flex items-center gap-3"><i class="ph-fill ph-calendar-check text-2xl text-edu-500"></i> Agenda Akademik</div>
+                                        <div class="divide-y divide-slate-100/80 p-2">
+                                            <div v-if="agendaItems.length === 0" class="p-6 text-center text-sm font-medium text-slate-500">Belum ada agenda.</div>
+                                            <div v-for="agenda in agendaItems.slice(0,4)" :key="agenda.id" class="p-4 flex gap-4 hover:bg-slate-50 rounded-xl transition-colors cursor-default" @click="openArticle(agenda.id)">
+                                                <div class="w-14 h-14 bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-edu-700 flex-shrink-0 cursor-pointer">
+                                                    <span class="text-lg font-extrabold leading-none">{{ new Date(agenda.metaDataObj?.tanggalMulai || agenda.date).getDate() }}</span>
+                                                    <span class="text-[9px] font-bold uppercase mt-1 tracking-wider">{{ new Date(agenda.metaDataObj?.tanggalMulai || agenda.date).toLocaleString('id-ID', {month:'short'}) }}</span>
                                                 </div>
-                                                <div>
-                                                    <h4 class="font-bold text-sm text-slate-800 leading-tight mb-1">{{ agenda.title }}</h4>
-                                                    <p class="text-xs text-slate-500"><i class="ph-fill ph-map-pin"></i> {{ agenda.metaDataObj?.lokasi || 'Lingkungan Lembaga' }}</p>
+                                                <div class="flex-1 flex flex-col justify-center cursor-pointer group">
+                                                    <h4 class="font-bold text-sm text-slate-800 leading-snug mb-1.5 group-hover:text-edu-600 transition-colors">{{ agenda.title }}</h4>
+                                                    <p class="text-xs text-slate-500 font-medium flex items-center gap-1.5"><i class="ph-fill ph-map-pin text-slate-400"></i> {{ agenda.metaDataObj?.lokasi || 'Lingkungan Lembaga' }}</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Kolom Kanan: Berita Utama -->
                                 <div class="lg:col-span-2 space-y-6">
-                                    <div class="flex items-center justify-between border-b border-slate-200 pb-2">
-                                        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2"><i class="ph-fill ph-newspaper text-edu-600"></i> Berita Terkini</h2>
-                                        <span class="text-xs font-bold text-edu-600 cursor-pointer">Lihat Semua</span>
+                                    <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+                                        <h2 class="text-2xl font-extrabold text-slate-800 flex items-center gap-3"><i class="ph-fill ph-newspaper-clipping text-edu-500"></i> Berita & Pengumuman</h2>
                                     </div>
-                                    
-                                    <div v-if="beritaItems.length === 0" class="edu-card p-10 text-center text-slate-500">Belum ada berita yang dipublikasikan.</div>
-                                    
+                                    <div v-if="beritaItems.length === 0" class="edu-card p-12 text-center text-slate-500 font-medium">Belum ada publikasi berita terbaru.</div>
                                     <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                        <div v-for="berita in beritaItems.slice(0,4)" :key="berita.id" class="edu-card overflow-hidden group cursor-pointer hover:shadow-md transition-shadow" @click="openArticle(berita.id)">
-                                            <div class="h-48 bg-slate-200 overflow-hidden relative">
-                                                <img :src="berita.imageUrl || 'https://placehold.co/600x400/f1f5f9/94a3b8?text=Berita'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                                <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-edu-700 text-[10px] font-bold px-2 py-1 rounded uppercase shadow-sm">{{ berita.category || 'Umum' }}</span>
+                                        <div v-for="berita in beritaItems.slice(0,4)" :key="berita.id" class="edu-card p-3 flex flex-col group cursor-pointer hover:-translate-y-1 transition-all shadow-sm hover:shadow-md border-slate-200/60" @click="openArticle(berita.id)">
+                                            <div class="h-48 bg-slate-100 rounded-xl overflow-hidden relative mb-4">
+                                                <img :src="berita.imageUrl || 'https://placehold.co/600x400/f1f5f9/94a3b8?text=Publikasi'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                                <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider shadow-sm">{{ berita.category || berita.type.replace('_',' ') }}</span>
                                             </div>
-                                            <div class="p-4">
-                                                <p class="text-[10px] text-slate-500 font-bold mb-2">{{ berita.date }}</p>
-                                                <h3 class="font-bold text-slate-800 leading-snug line-clamp-2 mb-2 group-hover:text-edu-600">{{ berita.title }}</h3>
-                                                <p class="text-xs text-slate-600 line-clamp-2">{{ String(berita.content).replace(/<[^>]*>?/gm, '') }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Direktori Guru Preview -->
-                                    <div v-if="guruItems.length > 0" class="pt-4 border-t border-slate-200">
-                                        <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="ph-fill ph-users text-edu-600"></i> Direktori Pengajar</h3>
-                                        <div class="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
-                                            <div v-for="guru in guruItems.slice(0,5)" :key="guru.id" class="w-32 flex-shrink-0 text-center cursor-pointer" @click="openArticle(guru.id)">
-                                                <img :src="guru.imageUrl || 'https://placehold.co/200x200/e2e8f0/64748b?text=Guru'" class="w-20 h-20 rounded-full mx-auto object-cover mb-2 border border-slate-200 shadow-sm">
-                                                <h4 class="font-bold text-xs text-slate-800 line-clamp-1">{{ guru.title }}</h4>
-                                                <p class="text-[10px] text-slate-500 line-clamp-1">{{ guru.metaDataObj?.mapel || guru.category || 'Pengajar' }}</p>
+                                            <div class="px-2 pb-2 flex-1 flex flex-col">
+                                                <p class="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-2">{{ berita.date }}</p>
+                                                <h3 class="font-extrabold text-slate-800 leading-snug line-clamp-2 mb-2 group-hover:text-edu-600 transition-colors">{{ berita.title }}</h3>
+                                                <p class="text-xs text-slate-500 line-clamp-2 font-medium leading-relaxed">{{ String(berita.content).replace(/<[^>]*>?/gm, '') }}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- 2.B PRESTASI & PENGHARGAAN SECTION -->
+                            <div v-if="prestasiItems.length > 0" class="pt-8">
+                                <div class="text-center mb-8">
+                                    <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-2">Prestasi & Penghargaan</h2>
+                                    <p class="text-slate-500 text-sm font-medium">Pencapaian terbaik dari civitas akademika kami.</p>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                                    <div v-for="prestasi in prestasiItems.slice(0,3)" :key="prestasi.id" class="edu-card overflow-hidden group cursor-pointer hover:-translate-y-1 transition-all border-slate-200/60 shadow-sm" @click="openArticle(prestasi.id)">
+                                        <div class="h-40 bg-slate-100 overflow-hidden relative">
+                                            <img :src="prestasi.imageUrl || getGalleryCover(prestasi) || 'https://placehold.co/400x300/f8fafc/94a3b8?text=Prestasi'" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+                                            <i class="ph-fill ph-medal text-4xl text-amber-400 absolute bottom-3 right-3 drop-shadow-md"></i>
+                                        </div>
+                                        <div class="p-5">
+                                            <p class="text-[10px] font-bold text-edu-600 uppercase tracking-widest mb-1">{{ prestasi.date }}</p>
+                                            <h4 class="font-extrabold text-slate-800 text-base mb-2 line-clamp-2">{{ prestasi.title }}</h4>
+                                            <p class="text-xs text-slate-500 line-clamp-2 font-medium">{{ String(prestasi.content).replace(/<[^>]*>?/gm, '') }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. SARANA PRASARANA (FASILITAS) -->
+                            <div v-if="fasilitasItems.length > 0" class="pt-8">
+                                <div class="text-center mb-8">
+                                    <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-2">Fasilitas Unggulan</h2>
+                                    <p class="text-slate-500 text-sm font-medium">Sarana prasarana terbaik untuk mendukung proses pembelajaran.</p>
+                                </div>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                                    <div v-for="fas in fasilitasItems.slice(0,4)" :key="fas.id" class="edu-card overflow-hidden group cursor-pointer hover:shadow-lg border-slate-200/60" @click="openArticle(fas.id)">
+                                        <div class="h-32 md:h-40 overflow-hidden">
+                                            <img :src="fas.imageUrl || getGalleryCover(fas) || 'https://placehold.co/400x300/f1f5f9/94a3b8?text=Fasilitas'" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                        </div>
+                                        <div class="p-4 text-center">
+                                            <h4 class="font-bold text-slate-800 text-sm">{{ fas.title }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 4. VIDEO EMBED SECTION -->
+                            <div v-if="videoItems.length > 0" class="pt-8">
+                                <div class="edu-card bg-slate-900 text-white overflow-hidden p-6 md:p-10 border-0">
+                                    <div class="flex flex-col lg:flex-row gap-8 items-center">
+                                        <div class="w-full lg:w-1/3 text-center lg:text-left">
+                                            <h2 class="text-2xl md:text-3xl font-extrabold mb-4">{{ videoItems[0].title }}</h2>
+                                            <p class="text-slate-300 text-sm mb-6 leading-relaxed line-clamp-4" v-html="videoItems[0].content"></p>
+                                            <span class="inline-block px-4 py-2 bg-white/10 rounded-lg text-xs font-bold uppercase tracking-wider"><i class="ph-fill ph-play-circle text-edu-400 mr-2"></i> Highlight Video</span>
+                                        </div>
+                                        <div class="w-full lg:w-2/3">
+                                            <div class="relative w-full overflow-hidden rounded-2xl shadow-2xl border-4 border-slate-800 bg-black aspect-video">
+                                                <div v-if="videoItems[0].embedCode" v-html="videoItems[0].embedCode" class="w-full h-full [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:absolute [&>iframe]:top-0 [&>iframe]:left-0"></div>
+                                                <div v-else class="w-full h-full flex items-center justify-center text-slate-500 font-bold">Iframe Video Tidak Valid</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 5. GALERI FOTO MASONRY -->
+                            <div v-if="galeriItems.length > 0" class="pt-8">
+                                <div class="flex items-center justify-between mb-6">
+                                    <div>
+                                        <h2 class="text-2xl font-extrabold text-slate-800">Galeri Kegiatan</h2>
+                                        <p class="text-slate-500 text-sm font-medium mt-1">Dokumentasi aktivitas dan momen penting lembaga.</p>
+                                    </div>
+                                </div>
+                                <div class="masonry-grid">
+                                    <div v-for="(gal, idx) in galeriItems" :key="idx" class="masonry-item relative group rounded-2xl overflow-hidden cursor-pointer shadow-sm border border-slate-200" @click="openArticle(gal.id)">
+                                        <img :src="gal.imageUrl || getGalleryCover(gal)" class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500" @error="$event.target.style.display='none'">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                                            <p class="text-white font-bold text-sm leading-tight drop-shadow-md">{{ gal.title }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 6. TESTIMONI ALUMNI / TOKOH (Card Layout) -->
+                            <div v-if="testimoniItems.length > 0" class="pt-8 pb-10">
+                                <div class="text-center mb-10">
+                                    <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-2">Suara Mereka</h2>
+                                    <p class="text-slate-500 text-sm font-medium">Apa kata alumni, wali murid, dan tokoh masyarakat tentang kami.</p>
+                                </div>
+                                <div class="flex overflow-x-auto gap-6 pb-6 snap-x snap-mandatory scrollbar-hide">
+                                    <div v-for="testi in testimoniItems" :key="testi.id" class="snap-center shrink-0 w-[85vw] sm:w-[400px] edu-card p-8 flex flex-col justify-between border-slate-200/60 shadow-sm" @click="openArticle(testi.id)">
+                                        <div class="cursor-pointer">
+                                            <i class="ph-fill ph-quotes text-4xl text-edu-100 mb-4 inline-block"></i>
+                                            <div class="text-sm text-slate-600 italic leading-relaxed font-medium mb-6 line-clamp-5" v-html="testi.content"></div>
+                                        </div>
+                                        <div class="flex items-center gap-4 pt-4 border-t border-slate-100">
+                                            <img :src="testi.imageUrl || getGalleryCover(testi) || 'https://placehold.co/100x100/e2e8f0/64748b?text=U'" class="w-12 h-12 rounded-full object-cover">
+                                            <div>
+                                                <h4 class="font-extrabold text-slate-800 text-sm">{{ testi.title }}</h4>
+                                                <p class="text-[10px] font-bold text-edu-600 uppercase tracking-widest">{{ testi.metaDataObj?.jabatan || 'Alumni / Tokoh' }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
                         <!-- ROUTE: ARTICLE READ VIEW -->
-                        <div v-else-if="route === 'article'" class="max-w-4xl mx-auto">
-                            <div v-if="activeArticle" class="edu-card p-6 md:p-10">
-                                <button @click="navigate('home')" class="text-sm font-semibold text-slate-500 hover:text-edu-600 flex items-center gap-1 mb-6"><i class="ph-bold ph-arrow-left"></i> Kembali</button>
+                        <div v-else-if="route === 'article'" class="max-w-4xl mx-auto pb-10">
+                            <div v-if="activeArticle" class="edu-card p-8 md:p-12">
+                                <button @click="navigate('home')" class="text-xs font-bold text-slate-400 hover:text-slate-800 flex items-center gap-1.5 mb-8 transition-colors"><i class="ph-bold ph-arrow-left text-base"></i> Kembali</button>
                                 
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    <span class="px-2.5 py-1 bg-edu-50 text-edu-700 text-xs font-bold rounded uppercase">{{ activeArticle.type }}</span>
-                                    <span v-if="activeArticle.category" class="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded uppercase">{{ activeArticle.category }}</span>
-                                    <span class="px-2.5 py-1 text-slate-500 text-xs font-medium flex items-center gap-1"><i class="ph-bold ph-calendar-blank"></i> {{ activeArticle.date }}</span>
+                                <div class="flex flex-wrap gap-2 mb-5">
+                                    <span class="px-3 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold tracking-widest rounded-md uppercase">{{ activeArticle.type.replace('_',' ') }}</span>
+                                    <span v-if="activeArticle.category" class="px-3 py-1 bg-edu-50 text-edu-700 text-[10px] font-bold tracking-widest rounded-md uppercase">{{ activeArticle.category }}</span>
+                                    <span class="px-3 py-1 text-slate-400 text-[10px] font-bold tracking-widest uppercase flex items-center gap-1"><i class="ph-bold ph-calendar-blank"></i> {{ activeArticle.date }}</span>
                                 </div>
 
-                                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6">{{ activeArticle.title }}</h1>
+                                <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-8 leading-tight tracking-tight">{{ activeArticle.title }}</h1>
                                 
-                                <img v-if="activeArticle.imageUrl && activeArticle.type !== 'Galeri'" :src="activeArticle.imageUrl" class="w-full rounded-xl mb-8 object-cover max-h-[400px]">
+                                <!-- Video CPT rendering -->
+                                <div v-if="activeArticle.type === 'video' && activeArticle.embedCode" class="w-full relative overflow-hidden rounded-2xl shadow-sm border border-slate-100 bg-black aspect-video mb-8">
+                                    <div v-html="activeArticle.embedCode" class="w-full h-full [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:absolute [&>iframe]:top-0 [&>iframe]:left-0"></div>
+                                </div>
+                                <img v-else-if="activeArticle.imageUrl && activeArticle.type !== 'kepala_sekolah'" :src="activeArticle.imageUrl" class="w-full rounded-2xl mb-10 object-cover max-h-[450px] shadow-sm border border-slate-100">
 
-                                <!-- Format khusus untuk Guru -->
-                                <div v-if="activeArticle.type === 'guru_staff'" class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6 flex flex-wrap gap-4">
-                                    <div v-if="activeArticle.metaDataObj?.nik" class="flex-1 min-w-[150px]">
-                                        <p class="text-[10px] uppercase text-slate-500 font-bold">NIP / NIK</p>
-                                        <p class="font-semibold text-slate-800">{{ activeArticle.metaDataObj.nik }}</p>
-                                    </div>
-                                    <div v-if="activeArticle.metaDataObj?.jabatan" class="flex-1 min-w-[150px]">
-                                        <p class="text-[10px] uppercase text-slate-500 font-bold">Jabatan</p>
-                                        <p class="font-semibold text-slate-800">{{ activeArticle.metaDataObj.jabatan }}</p>
-                                    </div>
-                                    <div v-if="activeArticle.metaDataObj?.mapel" class="flex-1 min-w-[150px]">
-                                        <p class="text-[10px] uppercase text-slate-500 font-bold">Mata Pelajaran</p>
-                                        <p class="font-semibold text-slate-800">{{ activeArticle.metaDataObj.mapel }}</p>
+                                <!-- Format khusus untuk Guru/Kepsek/Testimoni -->
+                                <div v-if="['guru_staff', 'kepala_sekolah', 'testimoni'].includes(activeArticle.type)" class="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8 flex flex-col md:flex-row gap-6 items-start">
+                                    <img v-if="activeArticle.type === 'kepala_sekolah' && activeArticle.imageUrl" :src="activeArticle.imageUrl" class="w-32 h-32 rounded-xl object-cover border-4 border-white shadow-sm flex-shrink-0">
+                                    <div class="flex-1 flex flex-wrap gap-6 w-full">
+                                        <div v-if="activeArticle.metaDataObj?.nik" class="flex-1 min-w-[150px]">
+                                            <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">NIP / NIK</p>
+                                            <p class="font-extrabold text-slate-800">{{ activeArticle.metaDataObj.nik }}</p>
+                                        </div>
+                                        <div v-if="activeArticle.metaDataObj?.jabatan" class="flex-1 min-w-[150px]">
+                                            <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">Jabatan / Status</p>
+                                            <p class="font-extrabold text-slate-800">{{ activeArticle.metaDataObj.jabatan }}</p>
+                                        </div>
+                                        <div v-if="activeArticle.metaDataObj?.mapel" class="flex-1 min-w-[150px]">
+                                            <p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">Mata Pelajaran</p>
+                                            <p class="font-extrabold text-slate-800">{{ activeArticle.metaDataObj.mapel }}</p>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- Galeri Custom Display -->
-                                <div v-if="activeArticle.type === 'Galeri' && getParsedGallery(activeArticle).length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                                    <img v-for="(img, i) in getParsedGallery(activeArticle)" :key="i" :src="img" class="w-full h-48 object-cover rounded-lg border border-slate-200">
+                                <!-- Tambahan Visi & Misi untuk Kepala Sekolah -->
+                                <div v-if="activeArticle.type === 'kepala_sekolah' && (activeArticle.metaDataObj?.visi || activeArticle.metaDataObj?.misi)" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                    <div v-if="activeArticle.metaDataObj?.visi" class="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                                        <h3 class="font-extrabold text-blue-800 mb-3 flex items-center gap-2"><i class="ph-fill ph-target text-xl"></i> Visi</h3>
+                                        <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">{{ activeArticle.metaDataObj.visi }}</p>
+                                    </div>
+                                    <div v-if="activeArticle.metaDataObj?.misi" class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100">
+                                        <h3 class="font-extrabold text-emerald-800 mb-3 flex items-center gap-2"><i class="ph-fill ph-rocket-launch text-xl"></i> Misi</h3>
+                                        <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">{{ activeArticle.metaDataObj.misi }}</p>
+                                    </div>
                                 </div>
 
-                                <div class="ql-editor p-0" v-html="activeArticle.content"></div>
+                                <!-- Galeri Repeater Display (Card Layout Hasil di Publik) -->
+                                <div v-if="['Galeri', 'fasilitas', 'testimoni', 'prestasi'].includes(activeArticle.type) && getParsedGallery(activeArticle).length > 0" class="mb-8">
+                                    <h3 class="font-bold text-slate-800 mb-4 text-sm uppercase tracking-widest border-b border-slate-100 pb-2">Lampiran Media</h3>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <a v-for="(img, i) in getParsedGallery(activeArticle)" :key="i" :href="img" target="_blank" class="block">
+                                            <img :src="img" class="w-full h-56 object-cover rounded-2xl border border-slate-100 shadow-sm hover:opacity-90 transition-opacity">
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Isi Konten / Prakata -->
+                                <div class="ql-editor p-0 text-slate-700 text-lg" v-html="activeArticle.content"></div>
                             </div>
                         </div>
 
-                        <!-- ROUTE: VIEWER (DIPERTAHANKAN DENGAN OPTIMASI) -->
-                        <div v-else-if="route === 'viewer'" class="max-w-7xl mx-auto h-[calc(100vh-8rem)] flex flex-col gap-4">
-                            <div class="edu-card p-4 flex flex-col sm:flex-row gap-4 items-center bg-white shadow-sm shrink-0">
-                                <div class="w-full sm:w-1/3">
-                                    <select v-model="viewerForm.sourceString" @change="handleViewerDropdownChange" class="w-full edu-input text-sm font-semibold cursor-pointer">
+                        <!-- ROUTE: VIEWER (DATA PUSAT) -->
+                        <div v-else-if="route === 'viewer'" class="max-w-7xl mx-auto flex flex-col gap-5 min-h-[70vh] pb-10">
+                            <!-- Filter Header -->
+                            <div class="edu-card p-5 flex flex-col md:flex-row gap-4 items-center bg-white shadow-sm shrink-0">
+                                <div class="w-full md:w-1/3 relative">
+                                    <label class="absolute -top-2 left-3 bg-white px-1 text-[9px] font-bold uppercase tracking-widest text-edu-600">Pilih Dokumen</label>
+                                    <select v-model="viewerForm.sourceString" @change="handleViewerDropdownChange" class="w-full edu-input font-bold text-sm cursor-pointer border-slate-200">
                                         <option value="" disabled>-- Pilih Dokumen Data --</option>
                                         <optgroup v-for="source in sources" :key="source.id" :label="source.name">
                                             <option v-for="tab in (source.tabs||[])" :key="tab.name" :value="source.id + '|||' + tab.name">{{ tab.name }} ({{ tab.category || 'Data' }})</option>
                                         </optgroup>
                                     </select>
                                 </div>
-                                <div class="w-full sm:flex-1 relative">
-                                    <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                    <!-- Menerapkan v-model dengan modifier untuk debounce manual di script -->
-                                    <input type="text" v-model="viewerForm.searchRaw" @input="debounceSearch" placeholder="Cari data spesifik... (Debounced)" class="w-full pl-10 pr-4 py-2.5 edu-input text-sm">
+                                <div class="w-full md:flex-1 relative">
+                                    <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
+                                    <input type="text" v-model="viewerForm.searchRaw" @input="debounceSearch" placeholder="Pencarian cepat data..." class="w-full pl-12 pr-4 py-3 edu-input font-medium text-sm">
                                 </div>
                             </div>
 
+                            <!-- Table Container -->
                             <div class="edu-card flex-1 flex flex-col overflow-hidden bg-white relative">
-                                <div v-if="viewerState.loading" class="absolute inset-0 bg-white/80 z-30 flex flex-col items-center justify-center">
-                                    <i class="ph-bold ph-spinner animate-spin text-4xl text-edu-600 mb-2"></i>
-                                    <p class="text-sm font-bold text-slate-600">Menarik data dari Google Sheets...</p>
+                                <div v-if="viewerState.loading" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-30 flex flex-col items-center justify-center">
+                                    <i class="ph-bold ph-circle-notch animate-spin text-5xl text-edu-500 mb-4"></i>
+                                    <p class="text-sm font-bold text-slate-600 tracking-wider uppercase">Menarik Data Spreadsheet...</p>
                                 </div>
                                 
                                 <div class="flex-1 overflow-auto" v-if="viewerState.headers.length > 0">
                                     <table class="w-full text-left border-collapse min-w-max">
-                                        <thead class="sticky top-0 z-20 bg-slate-100 shadow-sm">
+                                        <thead class="sticky top-0 z-20 bg-slate-50/95 backdrop-blur-md shadow-sm border-b border-slate-200">
                                             <tr>
                                                 <th v-for="(h, i) in viewerState.headers" :key="i" @click="viewerSort(i)" 
-                                                    :class="['px-4 py-3 text-xs font-bold text-slate-700 uppercase cursor-pointer hover:bg-slate-200 border-b border-slate-200', i === 0 ? 'sticky left-0 bg-slate-100 z-30 border-r' : '']">
-                                                    <div class="flex items-center gap-1">
-                                                        {{ h }} <i v-if="viewerForm.sortCol === i" :class="viewerForm.sortDir === 'asc' ? 'ph-sort-ascending' : 'ph-sort-descending'" class="ph-fill text-edu-600"></i>
+                                                    :class="['px-5 py-4 text-[10px] font-extrabold text-slate-500 uppercase tracking-widest cursor-pointer hover:text-slate-800 transition-colors', i === 0 ? 'sticky left-0 bg-slate-50/95 z-30 shadow-[1px_0_0_#e2e8f0]' : '']">
+                                                    <div class="flex items-center gap-1.5">
+                                                        {{ h }} <i v-if="viewerForm.sortCol === i" :class="viewerForm.sortDir === 'asc' ? 'ph-sort-ascending' : 'ph-sort-descending'" class="ph-bold text-edu-500 text-sm"></i>
                                                     </div>
                                                 </th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-slate-100">
-                                            <tr v-for="(row, idx) in viewerPaginated" :key="idx" class="hover:bg-slate-50 transition-colors">
-                                                <td v-for="(cell, cidx) in row" :key="cidx" :class="['px-4 py-2.5 text-sm text-slate-600', cidx === 0 ? 'sticky left-0 bg-white group-hover:bg-slate-50 border-r border-slate-100 z-10 font-semibold' : '']">
+                                            <tr v-for="(row, idx) in viewerPaginated" :key="idx" class="hover:bg-slate-50/50 transition-colors">
+                                                <td v-for="(cell, cidx) in row" :key="cidx" :class="['px-5 py-3.5 text-sm font-medium text-slate-600', cidx === 0 ? 'sticky left-0 bg-white group-hover:bg-slate-50 shadow-[1px_0_0_#f1f5f9] z-10 font-bold text-slate-800' : '']">
                                                     {{ cell }}
                                                 </td>
                                             </tr>
-                                            <tr v-if="viewerPaginated.length===0 && !viewerState.loading"><td :colspan="viewerState.headers.length" class="p-8 text-center text-slate-500">Data tidak ditemukan.</td></tr>
+                                            <tr v-if="viewerPaginated.length===0 && !viewerState.loading"><td :colspan="viewerState.headers.length" class="p-12 text-center text-slate-500 font-medium">Tidak ada data yang cocok dengan pencarian.</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
-                                <div v-else-if="!viewerState.loading" class="flex-1 flex flex-col items-center justify-center text-slate-400 p-8 text-center bg-slate-50">
-                                    <i class="ph-fill ph-table text-5xl mb-2 text-slate-300"></i>
-                                    <p class="text-sm font-semibold">Silakan pilih tab dari dropdown di atas.</p>
+                                <div v-else-if="!viewerState.loading" class="flex-1 flex flex-col items-center justify-center text-slate-400 p-12 text-center bg-slate-50">
+                                    <div class="w-20 h-20 bg-white rounded-2xl shadow-sm flex items-center justify-center mb-4 border border-slate-100"><i class="ph-fill ph-table text-4xl text-slate-300"></i></div>
+                                    <p class="text-sm font-bold text-slate-500">Pilih dokumen dan tab pada filter di atas untuk memulai.</p>
                                 </div>
                                 
-                                <div v-if="viewerState.headers.length > 0" class="border-t border-slate-200 bg-slate-50 p-3 flex justify-between items-center text-xs font-bold text-slate-600 shrink-0">
-                                    <div>Hal {{ viewerForm.page }} / {{ viewerTotalPages || 1 }} <span class="font-normal">({{ viewerFiltered.length }} baris)</span></div>
-                                    <div class="flex gap-1">
-                                        <button @click="viewerForm.page--" :disabled="viewerForm.page===1" class="edu-btn px-2 py-1 disabled:opacity-50"><i class="ph-bold ph-caret-left"></i></button>
-                                        <button @click="viewerForm.page++" :disabled="viewerForm.page===viewerTotalPages || viewerTotalPages===0" class="edu-btn px-2 py-1 disabled:opacity-50"><i class="ph-bold ph-caret-right"></i></button>
+                                <div v-if="viewerState.headers.length > 0" class="border-t border-slate-100 bg-white p-4 flex justify-between items-center text-xs font-bold text-slate-500 shrink-0">
+                                    <div>Hal <span class="text-slate-800">{{ viewerForm.page }}</span> / {{ viewerTotalPages || 1 }} <span class="font-medium ml-2">({{ viewerFiltered.length }} baris data)</span></div>
+                                    <div class="flex gap-2">
+                                        <button @click="viewerForm.page--" :disabled="viewerForm.page===1" class="w-9 h-9 edu-btn flex items-center justify-center disabled:opacity-50"><i class="ph-bold ph-caret-left"></i></button>
+                                        <button @click="viewerForm.page++" :disabled="viewerForm.page===viewerTotalPages || viewerTotalPages===0" class="w-9 h-9 edu-btn flex items-center justify-center disabled:opacity-50"><i class="ph-bold ph-caret-right"></i></button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- ROUTE: DASHBOARD ADMIN -->
-                        <div v-else-if="route === 'dashboard'" class="max-w-6xl mx-auto space-y-6">
-                            <h1 class="text-2xl font-bold text-slate-800">Dasbor Utama</h1>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                <div class="edu-card p-5 border-l-4 border-l-edu-500">
-                                    <p class="text-xs font-bold text-slate-500 uppercase">Total Konten Publik</p>
-                                    <p class="text-3xl font-extrabold text-slate-800 mt-1">{{ articles.length }}</p>
+                        <div v-else-if="route === 'dashboard'" class="max-w-6xl mx-auto space-y-6 pb-10">
+                            <h1 class="text-2xl font-extrabold text-slate-800 mb-2">Tinjauan Dasbor</h1>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                                <div class="edu-card p-6 flex flex-col relative overflow-hidden">
+                                    <i class="ph-fill ph-article text-5xl absolute -bottom-2 -right-2 text-slate-100"></i>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest relative z-10">Total Publikasi</p>
+                                    <p class="text-4xl font-black text-slate-800 mt-2 relative z-10">{{ articles.length }}</p>
                                 </div>
-                                <div class="edu-card p-5 border-l-4 border-l-emerald-500">
-                                    <p class="text-xs font-bold text-slate-500 uppercase">Total Berita</p>
-                                    <p class="text-3xl font-extrabold text-slate-800 mt-1">{{ beritaItems.length }}</p>
+                                <div class="edu-card p-6 flex flex-col relative overflow-hidden">
+                                    <i class="ph-fill ph-newspaper text-5xl absolute -bottom-2 -right-2 text-slate-100"></i>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest relative z-10">Berita Aktif</p>
+                                    <p class="text-4xl font-black text-slate-800 mt-2 relative z-10">{{ beritaItems.length }}</p>
                                 </div>
-                                <div class="edu-card p-5 border-l-4 border-l-amber-500">
-                                    <p class="text-xs font-bold text-slate-500 uppercase">Akses Sheet Data</p>
-                                    <p class="text-3xl font-extrabold text-slate-800 mt-1">{{ sources.length }} <span class="text-sm font-normal">Dokumen</span></p>
+                                <div class="edu-card p-6 flex flex-col relative overflow-hidden">
+                                    <i class="ph-fill ph-database text-5xl absolute -bottom-2 -right-2 text-slate-100"></i>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest relative z-10">Akses Sheet</p>
+                                    <p class="text-4xl font-black text-slate-800 mt-2 relative z-10">{{ sources.length }} <span class="text-xs font-bold text-slate-400 uppercase">Dokumen</span></p>
                                 </div>
-                                <div class="edu-card p-5 border-l-4 border-l-slate-800">
-                                    <p class="text-xs font-bold text-slate-500 uppercase">Role Anda</p>
-                                    <p class="text-xl font-extrabold text-slate-800 mt-2 uppercase">{{ currentUser.role }}</p>
+                                <div class="edu-card p-6 flex flex-col bg-slate-900 text-white relative overflow-hidden border-slate-800">
+                                    <i class="ph-fill ph-shield-check text-5xl absolute -bottom-2 -right-2 text-white/5"></i>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest relative z-10">Kredensial Anda</p>
+                                    <p class="text-2xl font-black text-white mt-4 uppercase tracking-wider relative z-10">{{ currentUser.role }}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- ROUTE: CMS LIST (Daftar Artikel) -->
-                        <div v-else-if="route === 'cms'" class="max-w-6xl mx-auto space-y-4">
-                            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl border border-slate-200">
-                                <h1 class="text-xl font-bold text-slate-800"><i class="ph-fill ph-article text-edu-600"></i> Kelola Konten & CPT</h1>
-                                <button @click="openEditor(null)" class="edu-btn edu-btn-primary flex items-center gap-2"><i class="ph-bold ph-plus"></i> Tulis Konten Baru</button>
+                        <!-- ROUTE: CMS LIST -->
+                        <div v-else-if="route === 'cms'" class="max-w-6xl mx-auto space-y-6 pb-10">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                <div>
+                                    <h1 class="text-2xl font-extrabold text-slate-800">Manajemen CPT</h1>
+                                    <p class="text-sm font-medium text-slate-500 mt-1">Kelola konten, berita, profil, slider, dan section lainnya.</p>
+                                </div>
+                                <button @click="openEditor(null)" class="edu-btn edu-btn-primary flex items-center gap-2 py-3 px-6"><i class="ph-bold ph-plus text-lg"></i> Buat Baru</button>
                             </div>
 
-                            <div class="edu-card bg-white overflow-hidden">
-                                <div class="p-4 border-b border-slate-100 flex gap-2 overflow-x-auto">
-                                    <button @click="cmsFilterType = 'All'" :class="['px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap', cmsFilterType === 'All' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200']">Semua</button>
-                                    <button v-for="type in ['berita', 'pengumuman', 'agenda', 'guru_staff', 'fasilitas', 'prestasi', 'dokumen', 'kepala_sekolah', 'identitas_lembaga']" :key="type" @click="cmsFilterType = type" :class="['px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap uppercase', cmsFilterType === type ? 'bg-edu-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200']">{{ type.replace('_', ' ') }}</button>
+                            <div class="edu-card overflow-hidden">
+                                <div class="p-3 border-b border-slate-100 flex gap-2 overflow-x-auto bg-slate-50 scrollbar-hide">
+                                    <button @click="cmsFilterType = 'All'" :class="['px-4 py-2 text-xs font-bold rounded-xl whitespace-nowrap transition-colors', cmsFilterType === 'All' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-200 border border-slate-200']">Semua</button>
+                                    <button v-for="type in ['berita', 'slider', 'video', 'testimoni', 'pengumuman', 'agenda', 'guru_staff', 'fasilitas', 'prestasi', 'dokumen', 'kepala_sekolah', 'identitas_lembaga']" :key="type" @click="cmsFilterType = type" :class="['px-4 py-2 text-xs font-bold rounded-xl whitespace-nowrap uppercase transition-colors', cmsFilterType === type ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-200 border border-slate-200']">{{ type.replace('_', ' ') }}</button>
                                 </div>
                                 <div class="divide-y divide-slate-100">
-                                    <div v-if="filteredCmsArticles.length === 0" class="p-8 text-center text-slate-500 text-sm">Tidak ada konten untuk tipe ini.</div>
-                                    <div v-for="item in filteredCmsArticles" :key="item.id" class="p-4 flex items-center justify-between hover:bg-slate-50">
+                                    <div v-if="filteredCmsArticles.length === 0" class="p-12 text-center text-slate-500 text-sm font-medium">Belum ada data untuk kategori ini.</div>
+                                    <div v-for="item in filteredCmsArticles" :key="item.id" class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/80 transition-colors">
                                         <div>
-                                            <h3 class="font-bold text-slate-800 text-sm">{{ item.title || 'Tanpa Judul' }}</h3>
-                                            <p class="text-[10px] text-slate-500 uppercase font-semibold mt-1">
-                                                <span class="text-edu-600">{{ item.type }}</span> &bull; {{ item.visibility }} &bull; {{ item.date }}
+                                            <h3 class="font-extrabold text-slate-800 text-base mb-1">{{ item.title || 'Tanpa Judul' }}</h3>
+                                            <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest flex items-center gap-2">
+                                                <span class="bg-edu-50 text-edu-700 px-2 py-0.5 rounded">{{ item.type.replace('_',' ') }}</span> 
+                                                <span>{{ item.visibility }}</span> &bull; <span>{{ item.date }}</span>
                                             </p>
                                         </div>
                                         <div class="flex gap-2">
-                                            <button @click="openEditor(item)" class="edu-btn px-2 py-1 text-xs text-slate-600"><i class="ph-bold ph-pencil-simple"></i> Edit</button>
-                                            <button @click="deleteArticle(item.id)" class="edu-btn px-2 py-1 text-xs text-red-600"><i class="ph-bold ph-trash"></i> Hapus</button>
+                                            <button @click="openEditor(item)" class="edu-btn px-4 py-2 text-xs text-slate-700 font-bold"><i class="ph-bold ph-pencil-simple mr-1"></i> Edit</button>
+                                            <button @click="deleteArticle(item.id)" class="edu-btn px-4 py-2 text-xs text-red-600 font-bold hover:bg-red-50 hover:border-red-200"><i class="ph-bold ph-trash mr-1"></i> Hapus</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- ROUTE: CMS EDITOR FULL PAGE (MENGGANTIKAN MODAL POPUP) -->
-                        <div v-else-if="route === 'cms-editor'" class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
+                        <!-- ROUTE: CMS EDITOR FULL PAGE -->
+                        <div v-else-if="route === 'cms-editor'" class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 pb-10">
                             
-                            <!-- Kolom Utama (Kiri): Judul & Konten Text -->
-                            <div class="flex-1 space-y-4">
-                                <div class="flex items-center gap-4 mb-2">
-                                    <button @click="navigate('cms')" class="edu-btn px-3 py-1.5 text-xs text-slate-500"><i class="ph-bold ph-arrow-left"></i> Batal / Kembali</button>
-                                    <h2 class="text-xl font-bold text-slate-800">{{ cmsForm.id ? 'Edit Konten' : 'Tulis Baru' }}</h2>
+                            <!-- Kolom Utama Editor (Kiri) WP Style -->
+                            <div class="flex-1 space-y-6">
+                                <div class="flex items-center gap-4">
+                                    <button @click="navigate('cms')" class="w-10 h-10 edu-btn flex items-center justify-center text-slate-500 rounded-full"><i class="ph-bold ph-arrow-left text-lg"></i></button>
+                                    <h2 class="text-2xl font-extrabold text-slate-800">{{ cmsForm.id ? 'Edit Data / Artikel' : 'Tulis Entri Baru' }}</h2>
                                 </div>
 
-                                <div class="edu-card p-5 space-y-4">
+                                <div class="edu-card p-6 md:p-8 space-y-4">
+                                    <!-- 1. Pilihan CPT -->
                                     <div>
-                                        <label class="block text-xs font-bold text-slate-600 mb-1">Pilih Jenis / Custom Post Type (CPT)</label>
-                                        <select v-model="cmsForm.type" @change="setDefaultEditorMeta" class="w-full edu-input font-bold text-edu-700 bg-edu-50 uppercase text-sm">
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Format Pos / Jenis Data (CPT)</label>
+                                        <select v-model="cmsForm.type" @change="setDefaultEditorMeta" class="w-full sm:w-1/2 min-w-[200px] edu-input font-bold text-slate-800 bg-slate-50 uppercase text-sm border-slate-200">
                                             <option value="berita">Berita / Artikel</option>
                                             <option value="pengumuman">Pengumuman</option>
                                             <option value="agenda">Agenda Kegiatan</option>
-                                            <option value="guru_staff">Profil Guru & Staff</option>
-                                            <option value="fasilitas">Fasilitas Lembaga</option>
                                             <option value="prestasi">Prestasi</option>
-                                            <option value="dokumen">Dokumen Unduhan</option>
+                                            <option value="testimoni">Testimoni</option>
+                                            <option value="guru_staff">Profil Guru & Staff</option>
                                             <option value="kepala_sekolah">Profil Kepala Sekolah</option>
-                                            <option value="identitas_lembaga">Identitas Lembaga (Nama, Alamat, Logo)</option>
-                                            <option value="Galeri">Galeri Foto (Legacy)</option>
+                                            <option value="fasilitas">Fasilitas & Sarana</option>
+                                            <option value="Galeri">Galeri Foto</option>
+                                            <option value="video">Video Embed</option>
+                                            <option value="slider">Slider Homepage (Hero)</option>
+                                            <option value="dokumen">Dokumen Unduhan</option>
+                                            <option value="identitas_lembaga">Identitas Lembaga (Nama, Alamat)</option>
                                         </select>
                                     </div>
                                     
-                                    <div>
-                                        <label class="block text-xs font-bold text-slate-600 mb-1">Judul Utama / Nama (Sesuai CPT)</label>
-                                        <input v-model="cmsForm.title" type="text" placeholder="Masukkan judul..." class="w-full edu-input text-lg font-bold">
+                                    <!-- 2. WP-Style Title Input -->
+                                    <div class="pt-4">
+                                        <input v-model="cmsForm.title" type="text" placeholder="Tambahkan Judul..." class="wp-title-input">
                                     </div>
 
-                                    <!-- DYNAMIC META DATA FIELDS BERDASARKAN CPT -->
-                                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <!-- Identitas Lembaga -->
-                                        <template v-if="cmsForm.type === 'identitas_lembaga'">
-                                            <div>
-                                                <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">NPSN / Nomor Izin</label>
-                                                <input v-model="editorMeta.npsn" type="text" class="w-full edu-input text-sm">
-                                            </div>
-                                            <div class="md:col-span-2">
-                                                <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Alamat Lengkap</label>
-                                                <textarea v-model="editorMeta.alamat" rows="2" class="w-full edu-input text-sm"></textarea>
-                                            </div>
-                                            <div class="md:col-span-2">
-                                                <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Kode Embed Google Maps (Iframe)</label>
-                                                <textarea v-model="cmsForm.embedCode" rows="2" class="w-full edu-input text-xs font-mono text-slate-500"></textarea>
-                                            </div>
-                                        </template>
-
-                                        <!-- Kepala Sekolah / Guru -->
-                                        <template v-else-if="['kepala_sekolah', 'guru_staff'].includes(cmsForm.type)">
-                                            <div>
-                                                <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">NIP / NIK</label>
-                                                <input v-model="editorMeta.nik" type="text" class="w-full edu-input text-sm">
-                                            </div>
-                                            <div>
-                                                <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Jabatan Posisi</label>
-                                                <input v-model="editorMeta.jabatan" type="text" placeholder="Cth: Kepala Sekolah / Waka Kurikulum" class="w-full edu-input text-sm">
-                                            </div>
-                                            <div v-if="cmsForm.type === 'guru_staff'">
-                                                <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Mata Pelajaran (Jika Guru)</label>
-                                                <input v-model="editorMeta.mapel" type="text" class="w-full edu-input text-sm">
-                                            </div>
-                                        </template>
-
-                                        <!-- Agenda -->
-                                        <template v-else-if="cmsForm.type === 'agenda'">
-                                            <div>
-                                                <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tanggal Mulai Pelaksanaan</label>
-                                                <input v-model="editorMeta.tanggalMulai" type="date" class="w-full edu-input text-sm">
-                                            </div>
-                                            <div>
-                                                <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tanggal Selesai (Opsional)</label>
-                                                <input v-model="editorMeta.tanggalSelesai" type="date" class="w-full edu-input text-sm">
-                                            </div>
-                                            <div class="md:col-span-2">
-                                                <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Lokasi / Tempat</label>
-                                                <input v-model="editorMeta.lokasi" type="text" class="w-full edu-input text-sm">
-                                            </div>
-                                        </template>
-
-                                        <!-- Default / Kategori Umum -->
-                                        <template v-if="!['identitas_lembaga'].includes(cmsForm.type)">
-                                            <div>
-                                                <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Kategori Label</label>
-                                                <input v-model="cmsForm.category" type="text" placeholder="Misal: Kurikulum" class="w-full edu-input text-sm">
-                                            </div>
-                                            <div>
-                                                <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tanggal Terbit</label>
-                                                <input v-model="cmsForm.date" type="date" class="w-full edu-input text-sm">
-                                            </div>
-                                        </template>
+                                    <!-- 3. Editor Teks Luas (Area Menulis Kaya) -->
+                                    <div v-show="!['Galeri'].includes(cmsForm.type)">
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1 mt-2">
+                                            {{ cmsForm.type === 'kepala_sekolah' ? 'Prakata / Sambutan Kepala Sekolah' : 'Area Menulis (Isi Konten Detail)' }}
+                                        </label>
+                                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                                            <div id="quill-editor" class="bg-white"></div>
+                                        </div>
                                     </div>
-                                    
-                                    <!-- Quill Editor -->
-                                    <div v-show="cmsForm.type !== 'Galeri'" class="mt-4">
-                                        <label class="block text-xs font-bold text-slate-600 mb-1">Isi Konten / Deskripsi Detail</label>
-                                        <div id="quill-editor" class="bg-white"></div>
+
+                                    <!-- 4. Dynamic Meta Boxes (Atribut Khusus Bawah Editor) -->
+                                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 mt-6 shadow-sm">
+                                        <h3 class="text-sm font-extrabold text-slate-800 mb-5 flex items-center gap-2"><i class="ph-fill ph-faders text-edu-500 text-lg"></i> Atribut Data Spesifik</h3>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                            <!-- Identitas Lembaga -->
+                                            <template v-if="cmsForm.type === 'identitas_lembaga'">
+                                                <div>
+                                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-1.5 ml-1">NPSN / Nomor Izin</label>
+                                                    <input v-model="editorMeta.npsn" type="text" class="w-full edu-input text-sm">
+                                                </div>
+                                                <div class="md:col-span-2">
+                                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-1.5 ml-1">Alamat Lengkap</label>
+                                                    <textarea v-model="editorMeta.alamat" rows="2" class="w-full edu-input text-sm"></textarea>
+                                                </div>
+                                                <div class="md:col-span-2">
+                                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-1.5 ml-1">Kode Iframe Google Maps</label>
+                                                    <textarea v-model="cmsForm.embedCode" rows="2" class="w-full edu-input text-xs font-mono text-slate-500"></textarea>
+                                                </div>
+                                            </template>
+
+                                            <!-- Kepala Sekolah / Guru / Testimoni -->
+                                            <template v-else-if="['kepala_sekolah', 'guru_staff', 'testimoni'].includes(cmsForm.type)">
+                                                <div v-if="cmsForm.type !== 'testimoni'">
+                                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-1.5 ml-1">NIP / NIK</label>
+                                                    <input v-model="editorMeta.nik" type="text" class="w-full edu-input text-sm">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-1.5 ml-1">Jabatan / Alumni / Status</label>
+                                                    <input v-model="editorMeta.jabatan" type="text" placeholder="Misal: Alumni 2020" class="w-full edu-input text-sm">
+                                                </div>
+                                                <div v-if="cmsForm.type === 'guru_staff'">
+                                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-1.5 ml-1">Mata Pelajaran</label>
+                                                    <input v-model="editorMeta.mapel" type="text" class="w-full edu-input text-sm">
+                                                </div>
+                                                
+                                                <!-- Tambahan Khusus Profil Kepala Sekolah -->
+                                                <div v-if="cmsForm.type === 'kepala_sekolah'" class="md:col-span-2 mt-2">
+                                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-1.5 ml-1">Visi Sekolah (Tujuan Utama)</label>
+                                                    <textarea v-model="editorMeta.visi" rows="2" class="w-full edu-input text-sm" placeholder="Contoh: Menjadi lembaga pendidikan yang unggul dan berkarakter..."></textarea>
+                                                </div>
+                                                <div v-if="cmsForm.type === 'kepala_sekolah'" class="md:col-span-2">
+                                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-1.5 ml-1">Misi Sekolah (Langkah-Langkah)</label>
+                                                    <textarea v-model="editorMeta.misi" rows="3" class="w-full edu-input text-sm" placeholder="Contoh: 1. Melaksanakan pembelajaran efektif..."></textarea>
+                                                </div>
+                                            </template>
+
+                                            <!-- Agenda -->
+                                            <template v-else-if="cmsForm.type === 'agenda'">
+                                                <div>
+                                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-1.5 ml-1">Tanggal Pelaksanaan</label>
+                                                    <input v-model="editorMeta.tanggalMulai" type="date" class="w-full edu-input text-sm font-bold text-slate-700">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-1.5 ml-1">Tanggal Selesai (Ops)</label>
+                                                    <input v-model="editorMeta.tanggalSelesai" type="date" class="w-full edu-input text-sm font-bold text-slate-700">
+                                                </div>
+                                                <div class="md:col-span-2">
+                                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-1.5 ml-1">Lokasi</label>
+                                                    <input v-model="editorMeta.lokasi" type="text" class="w-full edu-input text-sm">
+                                                </div>
+                                            </template>
+                                            
+                                            <!-- Video Embed -->
+                                            <template v-else-if="cmsForm.type === 'video'">
+                                                <div class="md:col-span-2">
+                                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-1.5 ml-1">Kode Embed Iframe Youtube</label>
+                                                    <textarea v-model="cmsForm.embedCode" rows="3" placeholder="<iframe src='...'></iframe>" class="w-full edu-input text-xs font-mono text-slate-500"></textarea>
+                                                </div>
+                                            </template>
+
+                                            <!-- Slider -->
+                                            <template v-else-if="cmsForm.type === 'slider'">
+                                                <div class="md:col-span-2">
+                                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-1.5 ml-1">Label Banner Kategori</label>
+                                                    <input v-model="cmsForm.category" type="text" placeholder="Misal: Info PPDB" class="w-full edu-input text-sm">
+                                                </div>
+                                            </template>
+
+                                            <!-- Umum -->
+                                            <template v-if="!['identitas_lembaga', 'video'].includes(cmsForm.type)">
+                                                <div v-if="cmsForm.type !== 'slider'">
+                                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-1.5 ml-1">Kategori / Label</label>
+                                                    <input v-model="cmsForm.category" type="text" placeholder="Misal: Kurikulum" class="w-full edu-input text-sm">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-1.5 ml-1">Tanggal Publikasi</label>
+                                                    <input v-model="cmsForm.date" type="date" class="w-full edu-input text-sm font-bold text-slate-700">
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <!-- 5. REPEATER KOLOM URL / MEDIA (CARD LAYOUT DINAMIS) -->
+                                    <div v-show="['Galeri', 'fasilitas', 'testimoni', 'prestasi'].includes(cmsForm.type)" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mt-6">
+                                        <div class="mb-5">
+                                            <h3 class="text-sm font-extrabold text-slate-800 flex items-center gap-2"><i class="ph-fill ph-images text-edu-500 text-xl"></i> Tambahan Data Media (URL Ekstra)</h3>
+                                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Tambahkan link sertifikat prestasi, portofolio, atau galeri kolase foto tambahan.</p>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                                            <!-- Looping Card Input -->
+                                            <div v-for="(url, idx) in cmsForm.galleryUrls" :key="idx" class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex flex-col gap-3 relative group transition-all hover:border-edu-300 hover:shadow-md">
+                                                <div class="flex gap-3 items-center">
+                                                    <div class="w-12 h-12 rounded-lg bg-slate-200 shrink-0 overflow-hidden border border-slate-300">
+                                                        <img v-if="url" :src="url" class="w-full h-full object-cover" @error="$event.target.style.display='none'">
+                                                        <i v-else class="ph-bold ph-image text-slate-400 text-xl w-full h-full flex items-center justify-center"></i>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <label class="block text-[9px] uppercase font-bold text-slate-500 mb-1">URL Media #{{ idx + 1 }}</label>
+                                                        <input v-model="cmsForm.galleryUrls[idx]" type="text" placeholder="https:// (ImageKit/Drive)" class="w-full edu-input text-xs py-1.5 font-mono">
+                                                    </div>
+                                                </div>
+                                                <button @click="cmsForm.galleryUrls.splice(idx, 1)" class="absolute -top-2 -right-2 w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"><i class="ph-bold ph-x text-xs"></i></button>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Tombol Tambah Data Card -->
+                                        <button @click="cmsForm.galleryUrls.push('')" class="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl text-slate-500 font-bold text-xs hover:border-edu-500 hover:text-edu-600 hover:bg-edu-50 transition-colors flex items-center justify-center gap-2">
+                                            <i class="ph-bold ph-plus-circle text-base"></i> Tambah Kolom Lampiran Media
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Kolom Kanan: Media, Atribut, Publikasi -->
-                            <div class="w-full lg:w-80 flex-shrink-0 space-y-4">
-                                <div class="edu-card p-5 bg-slate-800 text-white">
-                                    <h3 class="font-bold mb-4 border-b border-slate-700 pb-2">Status Publikasi</h3>
-                                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Hak Akses</label>
-                                    <select v-model="cmsForm.visibility" class="w-full edu-input bg-slate-700 border-slate-600 text-white mb-4 text-sm" :disabled="currentUser?.role !== 'admin'">
-                                        <option value="public">Publik (Terlihat Semua)</option>
-                                        <option value="internal">Internal (Wajib Login)</option>
+                            <!-- Kolom Panel Kanan (Publish & Cover) -->
+                            <div class="w-full lg:w-80 flex-shrink-0 space-y-6">
+                                <div class="edu-card p-6 bg-slate-900 text-white border-slate-800 shadow-xl shadow-slate-900/10">
+                                    <h3 class="font-extrabold mb-5 border-b border-slate-700 pb-3 text-lg">Aksi Publikasi</h3>
+                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-2">Visibilitas Data</label>
+                                    <select v-model="cmsForm.visibility" class="w-full edu-input bg-slate-800 border-slate-700 text-white mb-6 text-sm font-bold" :disabled="currentUser?.role !== 'admin'">
+                                        <option value="public">Publik Global (Terbuka)</option>
+                                        <option value="internal">Internal Saja (Private)</option>
                                     </select>
-                                    <button @click="saveCmsArticle" :disabled="isActionLoading" class="w-full edu-btn edu-btn-primary py-3 flex justify-center items-center gap-2">
+                                    <button @click="saveCmsArticle" :disabled="isActionLoading" class="w-full bg-white text-slate-900 hover:bg-slate-100 py-3.5 rounded-xl font-bold text-sm flex justify-center items-center gap-2 transition-transform hover:-translate-y-0.5">
                                         <i v-if="isActionLoading" class="ph-bold ph-spinner animate-spin"></i>
-                                        <i v-else class="ph-fill ph-paper-plane-tilt"></i>
-                                        {{ isActionLoading ? 'Menyimpan...' : 'Simpan & Publikasikan' }}
+                                        <i v-else class="ph-bold ph-paper-plane-tilt"></i>
+                                        {{ isActionLoading ? 'Menyimpan...' : 'Simpan Perubahan' }}
                                     </button>
                                 </div>
 
-                                <div class="edu-card p-5">
-                                    <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Media Utama</h3>
-                                    <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">URL Gambar / Foto Profil</label>
-                                    <textarea v-model="cmsForm.imageUrl" rows="3" placeholder="https://drive.google.com/... atau https://ik.imagekit.io/..." class="w-full edu-input text-xs font-mono"></textarea>
-                                    <p class="text-[9px] text-slate-400 mt-1 leading-tight">Gunakan *Direct Link* dari ImageKit atau Google Drive (pastikan akses link diset Public/Siapa saja).</p>
+                                <div class="edu-card p-6 border-t-4" :class="cmsForm.type === 'identitas_lembaga' ? 'border-t-edu-500' : 'border-t-slate-100'">
+                                    <h3 class="font-extrabold text-slate-800 mb-5 border-b border-slate-100 pb-3">
+                                        {{ cmsForm.type === 'identitas_lembaga' ? 'Logo Utama Lembaga' : 'Cover Utama' }}
+                                    </h3>
+                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-2 ml-1">
+                                        {{ cmsForm.type === 'identitas_lembaga' ? 'URL Logo Lembaga (PNG/JPG)' : 'URL Gambar Cover' }}
+                                    </label>
+                                    <textarea v-model="cmsForm.imageUrl" rows="3" placeholder="https://..." class="w-full edu-input text-xs font-mono"></textarea>
                                     
-                                    <img v-if="cmsForm.imageUrl" :src="cmsForm.imageUrl" class="w-full h-32 object-cover mt-3 rounded border border-slate-200" @error="$event.target.style.display='none'">
+                                    <img v-if="cmsForm.imageUrl" :src="cmsForm.imageUrl" class="w-full h-36 object-contain p-2 mt-4 rounded-xl border border-slate-200 shadow-sm bg-slate-50" @error="$event.target.style.display='none'">
                                 </div>
 
-                                <div class="edu-card p-5">
-                                    <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Atribut Tambahan</h3>
-                                    <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Hashtag / Kata Kunci</label>
-                                    <input v-model="cmsForm.tags" type="text" placeholder="pisahkan, dengan, koma" class="w-full edu-input text-sm mb-3">
+                                <div class="edu-card p-6">
+                                    <h3 class="font-extrabold text-slate-800 mb-5 border-b border-slate-100 pb-3">Atribut SEO & Tautan</h3>
+                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-2 ml-1">Hashtag / Kata Kunci</label>
+                                    <input v-model="cmsForm.tags" type="text" placeholder="pisahkan, dengan, koma" class="w-full edu-input text-sm mb-4">
 
-                                    <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tautan Lampiran (Jika Tipe Dokumen)</label>
+                                    <label class="block text-[9px] uppercase font-bold text-slate-400 tracking-widest mb-2 ml-1">Link Redirect Saat Diklik</label>
                                     <input v-model="cmsForm.redirectUrl" type="text" placeholder="https://..." class="w-full edu-input text-sm">
                                 </div>
                             </div>
@@ -564,43 +836,116 @@
                         </div>
 
                         <!-- ROUTE: SETTINGS -->
-                        <div v-else-if="route === 'settings'" class="max-w-4xl mx-auto space-y-6">
-                            <div class="edu-card p-6 md:p-8">
-                                <h1 class="text-xl font-bold text-slate-800 mb-6">Setelan Sumber Data (Google Sheets)</h1>
-                                <div class="flex gap-4 mb-6">
-                                    <input v-model="newSourceUrl" type="text" placeholder="Paste URL Spreadsheet di sini..." class="flex-1 edu-input">
-                                    <button @click="verifySourceUrl" :disabled="isActionLoading" class="edu-btn edu-btn-primary"><i class="ph-bold ph-plus"></i> Tambah</button>
+                        <div v-else-if="route === 'settings'" class="max-w-4xl mx-auto space-y-6 pb-10">
+                            
+                            <!-- Tab: Manajemen Menu -->
+                            <div class="edu-card p-8 md:p-10 border-t-4 border-t-edu-500">
+                                <h1 class="text-xl font-extrabold text-slate-800 mb-2">Manajemen Menu Navigasi</h1>
+                                <p class="text-sm font-medium text-slate-500 mb-6">Atur menu navigasi yang muncul di header pengunjung.</p>
+                                
+                                <div class="space-y-3 mb-6">
+                                    <div v-for="(menu, idx) in settingsForm.menus" :key="idx" class="flex flex-col sm:flex-row items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                        <i class="ph-bold ph-list text-slate-400 cursor-move hidden sm:block"></i>
+                                        <input v-model="menu.label" type="text" placeholder="Label (Misal: Profil)" class="w-full sm:w-1/3 edu-input text-sm font-bold py-2">
+                                        <input v-model="menu.url" type="text" placeholder="URL (#article?id=... atau https://...)" class="w-full sm:w-2/3 edu-input text-sm font-mono py-2">
+                                        <button @click="settingsForm.menus.splice(idx, 1)" class="w-full sm:w-auto edu-btn edu-btn-danger p-2"><i class="ph-bold ph-trash"></i></button>
+                                    </div>
+                                    <div v-if="settingsForm.menus.length === 0" class="text-center p-6 text-slate-400 border border-dashed rounded-xl">Belum ada menu khusus.</div>
+                                </div>
+                                <button @click="settingsForm.menus.push({label:'', url:''})" class="edu-btn text-sm font-bold text-slate-700 bg-white border-dashed w-full py-3"><i class="ph-bold ph-plus mr-1"></i> Tambah Item Menu</button>
+                            </div>
+
+                            <!-- Tab: Identitas & Footer -->
+                            <div class="edu-card p-8 md:p-10">
+                                <h1 class="text-xl font-extrabold text-slate-800 mb-6">Setelan Global & Footer</h1>
+                                <div class="grid grid-cols-1 gap-6 mb-6">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Deskripsi Footer</label>
+                                        <textarea v-model="settingsForm.appFooterText" rows="3" class="w-full edu-input text-sm" placeholder="Teks singkat di bagian bawah website..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab: Sumber Data -->
+                            <div class="edu-card p-8 md:p-10">
+                                <h1 class="text-xl font-extrabold text-slate-800 mb-6">Sumber Data Viewer (Spreadsheet)</h1>
+                                <div class="flex flex-col md:flex-row gap-4 mb-8">
+                                    <input v-model="newSourceUrl" type="text" placeholder="Paste URL Spreadsheet G-Drive Anda di sini..." class="flex-1 edu-input font-mono text-sm">
+                                    <button @click="verifySourceUrl" :disabled="isActionLoading" class="edu-btn edu-btn-primary py-3 md:py-auto"><i class="ph-bold ph-plus mr-1"></i> Hubungkan</button>
                                 </div>
 
-                                <div class="space-y-4">
-                                    <div v-for="(src, idx) in settingsForm.sources" :key="idx" class="border border-slate-200 rounded-lg p-4 bg-slate-50">
-                                        <div class="flex justify-between items-center mb-3">
-                                            <h4 class="font-bold text-slate-700 flex items-center gap-2"><i class="ph-fill ph-database text-edu-500"></i> {{ src.name }}</h4>
-                                            <button @click="settingsForm.sources.splice(idx, 1)" class="text-red-500 hover:text-red-700"><i class="ph-bold ph-trash"></i></button>
+                                <div class="space-y-5">
+                                    <div v-for="(src, idx) in settingsForm.sources" :key="idx" class="border border-slate-200 rounded-2xl p-5 bg-slate-50/50">
+                                        <div class="flex justify-between items-center mb-4">
+                                            <h4 class="font-bold text-slate-700 flex items-center gap-2"><i class="ph-fill ph-database text-edu-500 text-lg"></i> {{ src.name }}</h4>
+                                            <button @click="settingsForm.sources.splice(idx, 1)" class="w-8 h-8 rounded-full bg-white border border-slate-200 text-red-500 hover:text-red-700 hover:bg-red-50 flex items-center justify-center transition-colors"><i class="ph-bold ph-trash"></i></button>
                                         </div>
                                         <div class="space-y-2">
-                                            <div v-for="(tab, tidx) in (src.tabs||[])" :key="tidx" class="flex items-center gap-4 bg-white p-2 rounded border border-slate-100">
-                                                <label class="flex items-center gap-2 w-1/3">
-                                                    <input type="checkbox" v-model="tab.selected" class="accent-edu-600"> <span class="text-sm font-semibold truncate">{{ tab.name }}</span>
+                                            <div v-for="(tab, tidx) in (src.tabs||[])" :key="tidx" class="flex flex-col sm:flex-row sm:items-center gap-4 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                                                <label class="flex items-center gap-3 w-full sm:w-1/3">
+                                                    <input type="checkbox" v-model="tab.selected" class="w-4 h-4 accent-slate-900 rounded cursor-pointer"> <span class="text-sm font-bold text-slate-700 truncate cursor-pointer">{{ tab.name }}</span>
                                                 </label>
-                                                <select v-model="tab.visibility" :disabled="!tab.selected" class="edu-input text-xs w-1/4 py-1">
-                                                    <option value="internal">Internal</option>
-                                                    <option value="public">Publik</option>
+                                                <select v-model="tab.visibility" :disabled="!tab.selected" class="edu-input text-xs w-full sm:w-1/4 py-2 font-bold">
+                                                    <option value="internal">🔒 Internal</option>
+                                                    <option value="public">🌐 Publik</option>
                                                 </select>
-                                                <input v-model="tab.category" :disabled="!tab.selected" type="text" placeholder="Kategori" class="edu-input text-xs flex-1 py-1">
+                                                <input v-model="tab.category" :disabled="!tab.selected" type="text" placeholder="Nama Kategori" class="edu-input text-xs flex-1 py-2 font-bold">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mt-6 pt-4 border-t border-slate-200 flex justify-end">
-                                    <button @click="saveSettings" :disabled="isActionLoading" class="edu-btn edu-btn-primary"><i class="ph-bold ph-floppy-disk"></i> Simpan Konfigurasi</button>
-                                </div>
+                            </div>
+                            
+                            <!-- Save Button Float -->
+                            <div class="sticky bottom-6 flex justify-end z-20">
+                                <button @click="saveSettings" :disabled="isActionLoading" class="edu-btn edu-btn-primary py-4 px-8 shadow-2xl shadow-slate-900/40 text-sm"><i class="ph-bold ph-floppy-disk mr-2"></i> Simpan Semua Setelan</button>
                             </div>
                         </div>
 
                     </transition>
-                </div>
-            </main>
+                </main>
+                
+                <!-- MEGA FOOTER (GLOBAL) -->
+                <footer v-if="!['login'].includes(route)" class="bg-slate-900 text-slate-300 py-12 px-6 mt-auto border-t-4 border-edu-600">
+                    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
+                        <div class="col-span-1 md:col-span-2 space-y-4">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center p-1">
+                                    <img v-if="identitasLembaga.logo" :src="identitasLembaga.logo" class="w-full h-full object-contain">
+                                    <i v-else class="ph-bold ph-graduation-cap text-slate-900 text-xl"></i>
+                                </div>
+                                <h2 class="text-xl font-black text-white">{{ identitasLembaga.nama || 'Edu-Portal' }}</h2>
+                            </div>
+                            <p class="text-sm font-medium leading-relaxed max-w-md">{{ appConfig.appFooterText || 'Platform Sistem Informasi Manajemen Terpadu.' }}</p>
+                            <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-4">NPSN: {{ identitasLembaga.npsn || '-' }}</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-white font-bold mb-4 uppercase tracking-widest text-xs">Tautan Cepat</h3>
+                            <ul class="space-y-2 text-sm font-medium">
+                                <li><a @click="navigate('home')" class="hover:text-white cursor-pointer transition-colors">Beranda</a></li>
+                                <li><a @click="navigate('viewer')" class="hover:text-white cursor-pointer transition-colors">Pusat Data</a></li>
+                                <li v-for="menu in (appConfig.menus || []).slice(0,3)" :key="menu.label"><a @click="handleNavClick(menu.url)" class="hover:text-white cursor-pointer transition-colors">{{ menu.label }}</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-white font-bold mb-4 uppercase tracking-widest text-xs">Hubungi Kami</h3>
+                            <p class="text-sm font-medium leading-relaxed mb-4 flex items-start gap-2"><i class="ph-fill ph-map-pin mt-1 text-edu-500"></i> {{ identitasLembaga.alamat || 'Alamat belum diatur' }}</p>
+                            <div class="flex gap-3">
+                                <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-edu-600 transition-colors text-white"><i class="ph-bold ph-instagram-logo"></i></a>
+                                <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-edu-600 transition-colors text-white"><i class="ph-bold ph-youtube-logo"></i></a>
+                                <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-edu-600 transition-colors text-white"><i class="ph-bold ph-facebook-logo"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="max-w-7xl mx-auto border-t border-slate-800 mt-10 pt-6 text-center md:text-left flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 font-medium">
+                        <p>&copy; {{ new Date().getFullYear() }} {{ identitasLembaga.nama }}. All rights reserved.</p>
+                        <p class="mt-2 md:mt-0">Powered by Edu-Portal Enterprise V25.1</p>
+                    </div>
+                </footer>
+
+            </div>
         </template>
     </div>
 
@@ -608,7 +953,7 @@
     <script>
         const { createApp, ref, computed, onMounted, watch, nextTick } = Vue;
 
-        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyy5QjiHpZmQxre8Qh9o84WH0V5TqcTN4xybGke2B8MxFeVInRFZvrhD8lDozOBGmOe/exec'; // MASUKKAN URL WEB APP GAS V21 ANDA DI SINI
+        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzZwkQu1r49SZmynejioiU9aZoEofAunGvv34qeL1YJjp7v1P81u-4R0ZYgidN7PfD9fQ/exec'; // MASUKKAN URL WEB APP GAS V21/V25 ANDA DI SINI
 
         createApp({
             setup() {
@@ -637,11 +982,10 @@
                 const currentUser = ref(null);
                 const route = ref('home');
                 
-                const appConfig = ref({ appName: 'Edu-Portal', appLogo: '', appHeaderText: '' });
+                const appConfig = ref({ appName: 'Edu-Portal', appLogo: '', appFooterText: '', menus: [] });
                 const sources = ref([]); 
                 const articlesRaw = ref([]);
                 
-                // Parse metadata string into object for frontend usage
                 const articles = computed(() => articlesRaw.value.map(a => {
                     let parsedMeta = {};
                     try { if(a.metaData) parsedMeta = JSON.parse(a.metaData); } catch(e) {}
@@ -651,15 +995,15 @@
                 const activeArticle = ref(null);
                 const loginForm = ref({ username: '', password: '' });
                 
-                // CMS Editor State (Moved from Modal to Full Page)
+                // CMS Editor State
                 const cmsForm = ref({ type: 'berita', galleryUrls: [] });
                 const editorMeta = ref({});
                 const cmsFilterType = ref('All');
                 
-                const settingsForm = ref({ sources: [] });
+                const settingsForm = ref({ sources: [], menus: [], appFooterText: '' });
                 const newSourceUrl = ref('');
 
-                // Viewer State (With Search Debounce)
+                // Viewer State
                 const viewerForm = ref({ sourceString: '', searchRaw: '', search: '', sortCol: null, sortDir: 'asc', page: 1 });
                 const viewerState = ref({ loading: false, headers: [], rows: [] });
                 
@@ -668,6 +1012,25 @@
                     clearTimeout(searchTimeout);
                     searchTimeout = setTimeout(() => { viewerForm.value.search = viewerForm.value.searchRaw; }, 300);
                 };
+
+                // SLIDER LOGIC
+                const currentSlide = ref(0);
+                let slideInterval = null;
+                let touchStartX = 0; let touchEndX = 0;
+                
+                const mockSlider = [
+                    { id:'mock1', title: 'Selamat Datang di Sistem Informasi Terpadu', imageUrl: 'https://placehold.co/1200x600/0f172a/ffffff?text=Slide+Banner+1', content: 'Solusi digital untuk manajemen informasi dan publikasi lembaga.', category: 'Sistem Baru' },
+                    { id:'mock2', title: 'Penerimaan Siswa Baru Tahun Ajaran', imageUrl: 'https://placehold.co/1200x600/0284c7/ffffff?text=Slide+Banner+2', content: 'Segera daftarkan putra/putri Anda melalui portal pendaftaran online kami.', category: 'Info PPDB' }
+                ];
+                
+                const nextSlide = () => { const len = sliderItems.value.length > 0 ? sliderItems.value.length : mockSlider.length; currentSlide.value = (currentSlide.value + 1) % len; };
+                const prevSlide = () => { const len = sliderItems.value.length > 0 ? sliderItems.value.length : mockSlider.length; currentSlide.value = (currentSlide.value - 1 + len) % len; };
+                const setSlide = (idx) => { currentSlide.value = idx; };
+                const startSlider = () => { clearInterval(slideInterval); slideInterval = setInterval(nextSlide, 5000); };
+                const pauseSlider = () => { clearInterval(slideInterval); };
+                const handleTouchStart = (e) => { touchStartX = e.changedTouches[0].screenX; pauseSlider(); };
+                const handleTouchMove = (e) => { touchEndX = e.changedTouches[0].screenX; };
+                const handleTouchEnd = () => { if (touchStartX - touchEndX > 50) nextSlide(); if (touchEndX - touchStartX > 50) prevSlide(); startSlider(); };
 
                 const parseHash = () => {
                     const hash = window.location.hash.slice(1) || 'home';
@@ -692,8 +1055,12 @@
                         }
                     } else if (path === 'settings') {
                         settingsForm.value.sources = JSON.parse(JSON.stringify(sources.value || []));
+                        settingsForm.value.menus = JSON.parse(JSON.stringify(appConfig.value.menus || []));
+                        settingsForm.value.appFooterText = appConfig.value.appFooterText || '';
                     } else if (path === 'cms-editor' && !cmsForm.value.id && !cmsForm.value.type) {
-                        openEditor(null); // Initialize if accessed directly
+                        openEditor(null); 
+                    } else if (path === 'home') {
+                        startSlider();
                     }
                     
                     const scroller = document.getElementById('main-scroller');
@@ -705,6 +1072,12 @@
                     const paramsStr = new URLSearchParams(params).toString();
                     window.location.hash = `#${path}${paramsStr ? '?' + paramsStr : ''}`;
                 };
+                
+                const handleNavClick = (url) => {
+                    if(!url) return;
+                    if(url.startsWith('http')) window.open(url, '_blank');
+                    else window.location.hash = url;
+                };
 
                 const loadGlobalData = () => {
                     const role = currentUser.value ? currentUser.value.role : null;
@@ -714,13 +1087,20 @@
                             isGlobalLoading.value = false;
                             if(res && res.success) {
                                 appConfig.value = res.config || appConfig.value;
+                                if(typeof appConfig.value.menus === 'string') {
+                                    try { appConfig.value.menus = JSON.parse(appConfig.value.menus); } catch(e) { appConfig.value.menus = []; }
+                                }
                                 sources.value = res.sources || []; 
                                 articlesRaw.value = res.articles || [];
                                 parseHash();
                             }
                         }).catch(err => { isGlobalLoading.value = false; showToast("Gagal muat data.", "error"); });
                     } else {
-                        setTimeout(() => { isGlobalLoading.value = false; parseHash(); }, 1000); 
+                        setTimeout(() => { 
+                            isGlobalLoading.value = false; 
+                            appConfig.value.menus = [{label: 'Pusat Data', url: '#viewer'}];
+                            parseHash(); 
+                        }, 1000); 
                     }
                 };
 
@@ -738,18 +1118,23 @@
                         setTimeout(() => { isActionLoading.value = false; currentUser.value = {username: 'Admin', role: 'admin'}; navigate('dashboard'); }, 500);
                     }
                 };
-                const handleLogout = () => { currentUser.value = null; navigate('home'); loadGlobalData(); };
+                const handleLogout = () => { currentUser.value = null; isMobileMenuOpen.value = false; navigate('home'); loadGlobalData(); };
 
-                // COMPUTED PROPERTIES UNTUK EDU-PORTAL
+                // COMPUTED PROPERTIES UNTUK HOMEPAGE SECTIONS
                 const identitasLembaga = computed(() => {
                     const item = articles.value.find(a => a.type === 'identitas_lembaga');
                     return item ? { nama: item.title, logo: item.imageUrl, npsn: item.metaDataObj?.npsn, alamat: item.metaDataObj?.alamat, maps: item.embedCode } : appConfig.value;
                 });
                 const kepsekData = computed(() => articles.value.find(a => a.type === 'kepala_sekolah') || {});
-                const beritaItems = computed(() => articles.value.filter(a => a.type === 'berita'));
+                const beritaItems = computed(() => articles.value.filter(a => ['berita','pengumuman'].includes(a.type)));
                 const agendaItems = computed(() => articles.value.filter(a => a.type === 'agenda'));
                 const guruItems = computed(() => articles.value.filter(a => a.type === 'guru_staff'));
                 const fasilitasItems = computed(() => articles.value.filter(a => a.type === 'fasilitas'));
+                const sliderItems = computed(() => articles.value.filter(a => a.type === 'slider'));
+                const videoItems = computed(() => articles.value.filter(a => a.type === 'video'));
+                const galeriItems = computed(() => articles.value.filter(a => a.type === 'Galeri'));
+                const testimoniItems = computed(() => articles.value.filter(a => a.type === 'testimoni'));
+                const prestasiItems = computed(() => articles.value.filter(a => a.type === 'prestasi'));
 
                 const filteredCmsArticles = computed(() => {
                     if(cmsFilterType.value === 'All') return articles.value;
@@ -758,37 +1143,61 @@
 
                 let quillInstance = null;
                 const setDefaultEditorMeta = () => {
-                    if(!cmsForm.value.id) editorMeta.value = {}; // Reset meta if changing type on new post
+                    if(!cmsForm.value.id) editorMeta.value = {}; 
                 };
 
                 const openEditor = (article = null) => {
                     if (article) {
                         editorMeta.value = JSON.parse(JSON.stringify(article.metaDataObj || {}));
-                        cmsForm.value = { ...article };
+                        let parsedUrls = [''];
+                        if(article.galleryUrls) { 
+                            try { 
+                                const arr = JSON.parse(article.galleryUrls); 
+                                parsedUrls = Array.isArray(arr) && arr.length > 0 ? arr : ['']; 
+                            } catch(e){} 
+                        }
+                        cmsForm.value = { ...article, galleryUrls: parsedUrls };
                     } else {
                         editorMeta.value = {};
-                        cmsForm.value = { id: null, type: 'berita', title: '', content: '', imageUrl: '', category: '', visibility: 'public', author: currentUser.value?.username || 'Admin', date: new Date().toISOString().split('T')[0], tags: '', embedCode: '', redirectUrl: '', galleryUrls: [] };
+                        cmsForm.value = { id: null, type: 'berita', title: '', content: '', imageUrl: '', category: '', visibility: 'public', author: currentUser.value?.username || 'Admin', date: new Date().toISOString().split('T')[0], tags: '', embedCode: '', redirectUrl: '', galleryUrls: [''] };
                     }
                     navigate('cms-editor');
                     
                     nextTick(() => {
-                        if(!quillInstance && typeof Quill !== 'undefined' && document.getElementById('quill-editor')) {
-                            quillInstance = new Quill('#quill-editor', {
-                                theme: 'snow', placeholder: 'Tuliskan isi detail di sini...',
+                        const editorEl = document.getElementById('quill-editor');
+                        if (editorEl && typeof Quill !== 'undefined') {
+                            
+                            // Hapus instance/toolbar lama secara paksa jika ada sisa dari navigasi sebelumnya
+                            const parent = editorEl.parentElement;
+                            const oldToolbars = parent.querySelectorAll('.ql-toolbar');
+                            oldToolbars.forEach(tb => tb.remove());
+                            
+                            // Bersihkan isi HTML elemen dan atur ulang class-nya
+                            editorEl.innerHTML = '';
+                            editorEl.className = 'bg-white';
+                            
+                            // Inisialisasi ulang Quill dengan pasti
+                            quillInstance = new Quill(editorEl, {
+                                theme: 'snow', 
+                                placeholder: 'Mulai menulis di area editor konten ini...',
                                 modules: { toolbar: [ [{ 'header': [1, 2, 3, false] }], ['bold', 'italic', 'underline'], [{'list': 'ordered'}, {'list': 'bullet'}], ['link', 'image'], ['clean'] ] }
                             });
+                            
                             quillInstance.on('text-change', () => { cmsForm.value.content = quillInstance.root.innerHTML; });
+                            quillInstance.root.innerHTML = cmsForm.value.content || '';
                         }
-                        if(quillInstance) quillInstance.root.innerHTML = cmsForm.value.content || '';
                     });
                 };
 
                 const saveCmsArticle = () => {
                     isActionLoading.value = true;
-                    if(quillInstance && cmsForm.value.type !== 'Galeri') cmsForm.value.content = quillInstance.root.innerHTML;
+                    if(quillInstance && !['Galeri'].includes(cmsForm.value.type)) {
+                        cmsForm.value.content = quillInstance.root.innerHTML;
+                    }
                     
                     const payloadData = JSON.parse(JSON.stringify(cmsForm.value));
-                    payloadData.metaData = JSON.stringify(editorMeta.value); // Serialize meta
+                    payloadData.metaData = JSON.stringify(editorMeta.value); 
+                    if(Array.isArray(payloadData.galleryUrls)) payloadData.galleryUrls = JSON.stringify(payloadData.galleryUrls.filter(u => u && u.trim()!==''));
                     
                     if(GAS_API_URL) {
                         fetchGasApi('saveArticle', { payloadData }).then(res => {
@@ -839,16 +1248,52 @@
 
                 const openArticle = (id) => navigate('article', {id});
                 
-                const getParsedGallery = (item) => { try { return Array.isArray(JSON.parse(item.galleryUrls)) ? JSON.parse(item.galleryUrls) : []; } catch(e) { return []; } };
+                const getParsedGallery = (item) => { 
+                    try { 
+                        const arr = Array.isArray(JSON.parse(item.galleryUrls)) ? JSON.parse(item.galleryUrls) : [];
+                        return arr.filter(u => u && u.trim() !== ''); 
+                    } catch(e) { return []; } 
+                };
                 const getGalleryCover = (item) => getParsedGallery(item)[0] || item.imageUrl || '';
 
+                // SETTINGS LOGIC 
+                const saveSettings = () => {
+                    isActionLoading.value = true;
+                    if(GAS_API_URL) {
+                        const payloadConfig = { 
+                            sources: settingsForm.value.sources, 
+                            menus: JSON.stringify(settingsForm.value.menus.filter(m => m.label.trim()!=='')),
+                            appFooterText: settingsForm.value.appFooterText
+                        };
+                        fetchGasApi('saveAppConfig', { payloadData: payloadConfig }).then(res => {
+                            isActionLoading.value = false;
+                            if(res.success) { loadGlobalData(); showToast('Konfigurasi Tersimpan'); }
+                        });
+                    } else {
+                        setTimeout(() => { isActionLoading.value = false; showToast('Mock Simpan OK'); }, 500);
+                    }
+                };
+                
+                const verifySourceUrl = () => {
+                    if(!newSourceUrl.value) return;
+                    isActionLoading.value = true;
+                    if(GAS_API_URL) {
+                        fetchGasApi('fetchTabsFromUrl', { url: newSourceUrl.value }).then(res => {
+                            isActionLoading.value = false;
+                            if(res.success) { settingsForm.value.sources.push(res); newSourceUrl.value = ''; showToast('Sheet Ditambahkan'); }
+                            else showToast(res.error, 'error');
+                        });
+                    }
+                };
+
                 return {
-                    isGlobalLoading, isActionLoading, isMobileMenuOpen, currentUser, route, navigate, toast,
-                    articles, identitasLembaga, kepsekData, beritaItems, agendaItems, guruItems, fasilitasItems,
+                    isGlobalLoading, isActionLoading, isMobileMenuOpen, currentUser, route, navigate, handleNavClick, toast,
+                    articles, identitasLembaga, kepsekData, beritaItems, agendaItems, guruItems, fasilitasItems, sliderItems, videoItems, galeriItems, testimoniItems, prestasiItems, mockSlider,
                     filteredCmsArticles, cmsFilterType, cmsForm, editorMeta, openEditor, setDefaultEditorMeta, saveCmsArticle, deleteArticle, openArticle, getParsedGallery, getGalleryCover,
                     loginForm, handleLogin, handleLogout,
                     sources, viewerForm, viewerState, viewerPaginated, viewerFiltered, viewerTotalPages, viewerSort, debounceSearch, handleViewerDropdownChange,
-                    settingsForm, newSourceUrl, saveSettings: () => { /* Logic simpan setting sama spt V20 */ }
+                    settingsForm, newSourceUrl, saveSettings, verifySourceUrl,
+                    currentSlide, nextSlide, prevSlide, setSlide, pauseSlider, startSlider, handleTouchStart, handleTouchMove, handleTouchEnd, appConfig
                 };
             }
         }).mount('#app');
