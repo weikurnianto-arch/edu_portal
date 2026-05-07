@@ -14,11 +14,9 @@
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
     
     <!-- CDN SCRIPT -->
-    <!-- Penambahan plugin Typography untuk styling artikel otomatis -->
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
-    <!-- DOMPurify untuk Keamanan Anti-XSS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.3/purify.min.js"></script>
     
     <script>
@@ -105,7 +103,7 @@
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
 
-        /* QUILL EDITOR - WP Style Override (Menjamin kotak editor lebar & besar) */
+        /* QUILL EDITOR - WP Style Override */
         .ql-toolbar.ql-snow { border: none !important; border-bottom: 1px solid #e2e8f0 !important; background: #f8fafc; border-top-left-radius: 1rem; border-top-right-radius: 1rem; font-family: 'Inter', sans-serif; padding: 0.75rem 1rem; }
         .ql-container.ql-snow { border: none !important; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem; font-family: 'Inter', sans-serif; font-size: 1.05rem; background: #ffffff; }
         .ql-editor { min-height: 450px; line-height: 1.8; padding: 1.5rem; color: #334155; }
@@ -270,7 +268,7 @@
                                         <div class="absolute bottom-10 left-8 right-8 md:bottom-16 md:left-16 md:right-16 z-20">
                                             <span v-if="slide.category" class="inline-block px-3 py-1 bg-edu-500 text-white text-[10px] font-bold rounded-md uppercase tracking-widest mb-3 shadow-lg">{{ slide.category }}</span>
                                             <h2 class="text-3xl md:text-5xl font-black text-white leading-tight drop-shadow-lg mb-4 max-w-3xl">{{ slide.title }}</h2>
-                                            <p v-if="slide.content" class="text-slate-200 text-sm md:text-base max-w-2xl line-clamp-2 drop-shadow-md hidden sm:block" v-html="DOMPurify.sanitize(slide.content.replace(/<[^>]*>?/gm, ''))"></p>
+                                            <p v-if="slide.content" class="text-slate-200 text-sm md:text-base max-w-2xl line-clamp-2 drop-shadow-md hidden sm:block" v-html="DOMPurify.sanitize(String(slide.content || '').replace(/<[^>]*>?/gm, ''))"></p>
                                         </div>
                                     </div>
                                 </transition-group>
@@ -287,13 +285,13 @@
                             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                                 <div class="lg:col-span-1 space-y-8">
                                     <!-- Profil Kepsek -->
-                                    <div v-if="kepsekData.title" class="edu-card p-8 text-center relative overflow-hidden bg-gradient-to-b from-white to-slate-50">
+                                    <div v-if="kepsekData && kepsekData.title" class="edu-card p-8 text-center relative overflow-hidden bg-gradient-to-b from-white to-slate-50">
                                         <div class="w-24 h-24 mx-auto mb-5 rounded-full p-1 bg-gradient-to-tr from-edu-500 to-emerald-400">
                                             <img :src="kepsekData.imageUrl || 'https://placehold.co/400x400/e2e8f0/64748b?text=Foto'" class="w-full h-full rounded-full border-4 border-white object-cover">
                                         </div>
                                         <h3 class="font-extrabold text-slate-800 text-lg">{{ kepsekData.title }}</h3>
                                         <p class="text-[10px] text-edu-600 font-bold uppercase tracking-widest mb-4 mt-1">{{ kepsekData.metaDataObj?.jabatan || 'Kepala Lembaga' }}</p>
-                                        <div class="text-sm text-slate-600 leading-relaxed italic line-clamp-4 font-medium" v-html="DOMPurify.sanitize(kepsekData.content)"></div>
+                                        <div class="text-sm text-slate-600 leading-relaxed italic line-clamp-4 font-medium" v-html="DOMPurify.sanitize(kepsekData.content || '')"></div>
                                         <button @click="openArticle(kepsekData.id)" class="mt-5 text-xs font-bold text-slate-800 border-b-2 border-edu-500 pb-0.5 hover:text-edu-600 transition-colors">Profil Lengkap</button>
                                     </div>
 
@@ -304,8 +302,8 @@
                                             <div v-if="agendaItems.length === 0" class="p-6 text-center text-sm font-medium text-slate-500">Belum ada agenda.</div>
                                             <div v-for="agenda in agendaItems.slice(0,4)" :key="agenda.id" class="p-4 flex gap-4 hover:bg-slate-50 rounded-xl transition-colors cursor-default" @click="openArticle(agenda.id)">
                                                 <div class="w-14 h-14 bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-edu-700 flex-shrink-0 cursor-pointer">
-                                                    <span class="text-lg font-extrabold leading-none">{{ new Date(agenda.metaDataObj?.tanggalMulai || agenda.date).getDate() }}</span>
-                                                    <span class="text-[9px] font-bold uppercase mt-1 tracking-wider">{{ new Date(agenda.metaDataObj?.tanggalMulai || agenda.date).toLocaleString('id-ID', {month:'short'}) }}</span>
+                                                    <span class="text-lg font-extrabold leading-none">{{ new Date(agenda.metaDataObj?.tanggalMulai || agenda.date).getDate() || '-' }}</span>
+                                                    <span class="text-[9px] font-bold uppercase mt-1 tracking-wider">{{ (agenda.metaDataObj?.tanggalMulai || agenda.date) ? new Date(agenda.metaDataObj?.tanggalMulai || agenda.date).toLocaleString('id-ID', {month:'short'}) : 'Bln' }}</span>
                                                 </div>
                                                 <div class="flex-1 flex flex-col justify-center cursor-pointer group">
                                                     <h4 class="font-bold text-sm text-slate-800 leading-snug mb-1.5 group-hover:text-edu-600 transition-colors">{{ agenda.title }}</h4>
@@ -325,12 +323,12 @@
                                         <div v-for="berita in beritaItems.slice(0,4)" :key="berita.id" class="edu-card p-3 flex flex-col group cursor-pointer hover:-translate-y-1 transition-all shadow-sm hover:shadow-md border-slate-200/60" @click="openArticle(berita.id)">
                                             <div class="h-48 bg-slate-100 rounded-xl overflow-hidden relative mb-4">
                                                 <img :src="berita.imageUrl || 'https://placehold.co/600x400/f1f5f9/94a3b8?text=Publikasi'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                                                <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider shadow-sm">{{ berita.category || berita.type.replace('_',' ') }}</span>
+                                                <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider shadow-sm">{{ berita.category || (berita.type || '').replace('_',' ') }}</span>
                                             </div>
                                             <div class="px-2 pb-2 flex-1 flex flex-col">
                                                 <p class="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-2">{{ berita.date }}</p>
                                                 <h3 class="font-extrabold text-slate-800 leading-snug line-clamp-2 mb-2 group-hover:text-edu-600 transition-colors">{{ berita.title }}</h3>
-                                                <p class="text-xs text-slate-500 line-clamp-2 font-medium leading-relaxed">{{ berita.metaDataObj?.excerpt || String(berita.content).replace(/<[^>]*>?/gm, '').substring(0,120) + '...' }}</p>
+                                                <p class="text-xs text-slate-500 line-clamp-2 font-medium leading-relaxed">{{ berita.metaDataObj?.excerpt || String(berita.content || '').replace(/<[^>]*>?/gm, '').substring(0,120) + '...' }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -353,7 +351,7 @@
                                         <div class="p-5">
                                             <p class="text-[10px] font-bold text-edu-600 uppercase tracking-widest mb-1">{{ prestasi.date }}</p>
                                             <h4 class="font-extrabold text-slate-800 text-base mb-2 line-clamp-2">{{ prestasi.title }}</h4>
-                                            <p class="text-xs text-slate-500 line-clamp-2 font-medium">{{ prestasi.metaDataObj?.excerpt || String(prestasi.content).replace(/<[^>]*>?/gm, '').substring(0,120) + '...' }}</p>
+                                            <p class="text-xs text-slate-500 line-clamp-2 font-medium">{{ prestasi.metaDataObj?.excerpt || String(prestasi.content || '').replace(/<[^>]*>?/gm, '').substring(0,120) + '...' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -383,7 +381,7 @@
                                     <div class="flex flex-col lg:flex-row gap-8 items-center">
                                         <div class="w-full lg:w-1/3 text-center lg:text-left">
                                             <h2 class="text-2xl md:text-3xl font-extrabold mb-4">{{ videoItems[0].title }}</h2>
-                                            <p class="text-slate-300 text-sm mb-6 leading-relaxed line-clamp-4" v-html="DOMPurify.sanitize(videoItems[0].content)"></p>
+                                            <p class="text-slate-300 text-sm mb-6 leading-relaxed line-clamp-4" v-html="DOMPurify.sanitize(videoItems[0].content || '')"></p>
                                             <span class="inline-block px-4 py-2 bg-white/10 rounded-lg text-xs font-bold uppercase tracking-wider"><i class="ph-fill ph-play-circle text-edu-400 mr-2"></i> Highlight Video</span>
                                         </div>
                                         <div class="w-full lg:w-2/3">
@@ -424,7 +422,7 @@
                                     <div v-for="testi in testimoniItems" :key="testi.id" class="snap-center shrink-0 w-[85vw] sm:w-[400px] edu-card p-8 flex flex-col justify-between border-slate-200/60 shadow-sm" @click="openArticle(testi.id)">
                                         <div class="cursor-pointer">
                                             <i class="ph-fill ph-quotes text-4xl text-edu-100 mb-4 inline-block"></i>
-                                            <div class="text-sm text-slate-600 italic leading-relaxed font-medium mb-6 line-clamp-5" v-html="DOMPurify.sanitize(testi.content)"></div>
+                                            <div class="text-sm text-slate-600 italic leading-relaxed font-medium mb-6 line-clamp-5" v-html="DOMPurify.sanitize(testi.content || '')"></div>
                                         </div>
                                         <div class="flex items-center gap-4 pt-4 border-t border-slate-100">
                                             <img :src="testi.imageUrl || getGalleryCover(testi) || 'https://placehold.co/100x100/e2e8f0/64748b?text=U'" class="w-12 h-12 rounded-full object-cover">
@@ -441,16 +439,17 @@
 
                         <!-- ROUTE: ARTICLE READ VIEW -->
                         <div v-else-if="route === 'article'" class="max-w-4xl mx-auto pb-10">
-                            <div v-if="activeArticle" class="edu-card p-8 md:p-12">
-                                <button @click="navigate('home')" class="text-xs font-bold text-slate-400 hover:text-slate-800 flex items-center gap-1.5 mb-8 transition-colors"><i class="ph-bold ph-arrow-left text-base"></i> Kembali</button>
+                            <!-- JIKA ARTIKEL DITEMUKAN (Aman dari null crash) -->
+                            <div v-if="activeArticle" class="edu-card p-8 md:p-12 shadow-sm border-slate-200/60">
+                                <button @click="navigate('home')" class="text-xs font-bold text-slate-400 hover:text-slate-800 flex items-center gap-1.5 mb-8 transition-colors"><i class="ph-bold ph-arrow-left text-base"></i> Kembali ke Beranda</button>
                                 
                                 <div class="flex flex-wrap gap-2 mb-5">
-                                    <span class="px-3 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold tracking-widest rounded-md uppercase">{{ activeArticle.type.replace('_',' ') }}</span>
+                                    <span class="px-3 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold tracking-widest rounded-md uppercase">{{ (activeArticle.type || 'Publikasi').replace('_',' ') }}</span>
                                     <span v-if="activeArticle.category" class="px-3 py-1 bg-edu-50 text-edu-700 text-[10px] font-bold tracking-widest rounded-md uppercase">{{ activeArticle.category }}</span>
-                                    <span class="px-3 py-1 text-slate-400 text-[10px] font-bold tracking-widest uppercase flex items-center gap-1"><i class="ph-bold ph-calendar-blank"></i> {{ activeArticle.date }}</span>
+                                    <span v-if="activeArticle.date" class="px-3 py-1 text-slate-400 text-[10px] font-bold tracking-widest uppercase flex items-center gap-1"><i class="ph-bold ph-calendar-blank"></i> {{ activeArticle.date }}</span>
                                 </div>
 
-                                <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-8 leading-tight tracking-tight">{{ activeArticle.title }}</h1>
+                                <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-8 leading-tight tracking-tight">{{ activeArticle.title || 'Tanpa Judul' }}</h1>
                                 
                                 <!-- Video CPT rendering -->
                                 <div v-if="activeArticle.type === 'video' && activeArticle.embedCode" class="w-full relative overflow-hidden rounded-2xl shadow-sm border border-slate-100 bg-black aspect-video mb-8">
@@ -500,7 +499,15 @@
                                 </div>
 
                                 <!-- Isi Konten / Prakata (Di-sanitize dengan DOMPurify dan dipoles dengan Tailwind Typography 'prose') -->
-                                <div class="prose prose-slate lg:prose-lg max-w-none prose-headings:font-extrabold prose-a:text-edu-600 hover:prose-a:text-edu-700 text-slate-700" v-html="DOMPurify.sanitize(activeArticle.content)"></div>
+                                <div class="prose prose-slate lg:prose-lg max-w-none prose-headings:font-extrabold prose-a:text-edu-600 hover:prose-a:text-edu-700 text-slate-700" v-html="DOMPurify.sanitize(activeArticle.content || '')"></div>
+                            </div>
+                            
+                            <!-- JIKA ARTIKEL TIDAK DITEMUKAN / ERROR (Fallback Layar) -->
+                            <div v-else class="text-center p-16 edu-card mt-10 border-dashed border-2 border-slate-200">
+                                <i class="ph-fill ph-warning-circle text-6xl text-slate-300 mb-5 inline-block"></i>
+                                <h3 class="text-2xl font-extrabold text-slate-700 mb-2">Data Tidak Ditemukan</h3>
+                                <p class="text-sm text-slate-500 mb-8 max-w-md mx-auto">Artikel yang Anda cari mungkin telah dihapus, dipindahkan, atau sistem gagal mencocokkan referensi ID dari pangkalan data.</p>
+                                <button @click="navigate('home')" class="edu-btn edu-btn-primary py-3 px-6"><i class="ph-bold ph-arrow-left mr-2"></i> Kembali ke Halaman Utama</button>
                             </div>
                         </div>
 
@@ -615,7 +622,7 @@
                                         <div>
                                             <h3 class="font-extrabold text-slate-800 text-base mb-1">{{ item.title || 'Tanpa Judul' }}</h3>
                                             <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest flex items-center gap-2">
-                                                <span class="bg-edu-50 text-edu-700 px-2 py-0.5 rounded">{{ item.type.replace('_',' ') }}</span> 
+                                                <span class="bg-edu-50 text-edu-700 px-2 py-0.5 rounded">{{ (item.type || '').replace('_',' ') }}</span> 
                                                 <span>{{ item.visibility }}</span> &bull; <span>{{ item.date }}</span>
                                             </p>
                                         </div>
@@ -781,7 +788,7 @@
                                         </div>
                                         
                                         <!-- Tombol Tambah Data Card -->
-                                        <button @click="cmsForm.galleryUrls.push('')" class="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl text-slate-500 font-bold text-xs hover:border-edu-500 hover:text-edu-600 hover:bg-edu-50 transition-colors flex items-center justify-center gap-2">
+                                        <button type="button" @click="cmsForm.galleryUrls.push('')" class="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl text-slate-500 font-bold text-xs hover:border-edu-500 hover:text-edu-600 hover:bg-edu-50 transition-colors flex items-center justify-center gap-2">
                                             <i class="ph-bold ph-plus-circle text-base"></i> Tambah Kolom Lampiran Media
                                         </button>
                                     </div>
@@ -874,11 +881,11 @@
                                         <i class="ph-bold ph-list text-slate-400 cursor-move hidden sm:block"></i>
                                         <input v-model="menu.label" type="text" placeholder="Label (Misal: Profil)" class="w-full sm:w-1/3 edu-input text-sm font-bold py-2">
                                         <input v-model="menu.url" type="text" placeholder="URL (#article?id=... atau https://...)" class="w-full sm:w-2/3 edu-input text-sm font-mono py-2">
-                                        <button @click="settingsForm.menus.splice(idx, 1)" class="w-full sm:w-auto edu-btn edu-btn-danger p-2"><i class="ph-bold ph-trash"></i></button>
+                                        <button type="button" @click="settingsForm.menus.splice(idx, 1)" class="w-full sm:w-auto edu-btn edu-btn-danger p-2"><i class="ph-bold ph-trash"></i></button>
                                     </div>
-                                    <div v-if="settingsForm.menus.length === 0" class="text-center p-6 text-slate-400 border border-dashed rounded-xl">Belum ada menu khusus.</div>
+                                    <div v-if="!settingsForm.menus || settingsForm.menus.length === 0" class="text-center p-6 text-slate-400 border border-dashed rounded-xl">Belum ada menu khusus.</div>
                                 </div>
-                                <button @click="settingsForm.menus.push({label:'', url:''})" class="edu-btn text-sm font-bold text-slate-700 bg-white border-dashed w-full py-3"><i class="ph-bold ph-plus mr-1"></i> Tambah Item Menu</button>
+                                <button type="button" @click="settingsForm.menus.push({label:'', url:''})" class="edu-btn text-sm font-bold text-slate-700 bg-white border-dashed w-full py-3"><i class="ph-bold ph-plus mr-1"></i> Tambah Item Menu</button>
                             </div>
 
                             <!-- Tab: Identitas & Footer -->
@@ -897,14 +904,14 @@
                                 <h1 class="text-xl font-extrabold text-slate-800 mb-6">Sumber Data Viewer (Spreadsheet)</h1>
                                 <div class="flex flex-col md:flex-row gap-4 mb-8">
                                     <input v-model="newSourceUrl" type="text" placeholder="Paste URL Spreadsheet G-Drive Anda di sini..." class="flex-1 edu-input font-mono text-sm">
-                                    <button @click="verifySourceUrl" :disabled="isActionLoading" class="edu-btn edu-btn-primary py-3 md:py-auto"><i class="ph-bold ph-plus mr-1"></i> Hubungkan</button>
+                                    <button type="button" @click="verifySourceUrl" :disabled="isActionLoading" class="edu-btn edu-btn-primary py-3 md:py-auto"><i class="ph-bold ph-plus mr-1"></i> Hubungkan</button>
                                 </div>
 
                                 <div class="space-y-5">
                                     <div v-for="(src, idx) in settingsForm.sources" :key="idx" class="border border-slate-200 rounded-2xl p-5 bg-slate-50/50">
                                         <div class="flex justify-between items-center mb-4">
                                             <h4 class="font-bold text-slate-700 flex items-center gap-2"><i class="ph-fill ph-database text-edu-500 text-lg"></i> {{ src.name }}</h4>
-                                            <button @click="settingsForm.sources.splice(idx, 1)" class="w-8 h-8 rounded-full bg-white border border-slate-200 text-red-500 hover:text-red-700 hover:bg-red-50 flex items-center justify-center transition-colors"><i class="ph-bold ph-trash"></i></button>
+                                            <button type="button" @click="settingsForm.sources.splice(idx, 1)" class="w-8 h-8 rounded-full bg-white border border-slate-200 text-red-500 hover:text-red-700 hover:bg-red-50 flex items-center justify-center transition-colors"><i class="ph-bold ph-trash"></i></button>
                                         </div>
                                         <div class="space-y-2">
                                             <div v-for="(tab, tidx) in (src.tabs||[])" :key="tidx" class="flex flex-col sm:flex-row sm:items-center gap-4 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
@@ -924,7 +931,7 @@
                             
                             <!-- Save Button Float -->
                             <div class="sticky bottom-6 flex justify-end z-20">
-                                <button @click="saveSettings" :disabled="isActionLoading" class="edu-btn edu-btn-primary py-4 px-8 shadow-2xl shadow-slate-900/40 text-sm"><i class="ph-bold ph-floppy-disk mr-2"></i> Simpan Semua Setelan</button>
+                                <button type="button" @click="saveSettings" :disabled="isActionLoading" class="edu-btn edu-btn-primary py-4 px-8 shadow-2xl shadow-slate-900/40 text-sm"><i class="ph-bold ph-floppy-disk mr-2"></i> Simpan Semua Setelan</button>
                             </div>
                         </div>
 
@@ -967,7 +974,7 @@
                     </div>
                     <div class="max-w-7xl mx-auto border-t border-slate-800 mt-10 pt-6 text-center md:text-left flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 font-medium">
                         <p>&copy; {{ new Date().getFullYear() }} {{ identitasLembaga.nama }}. All rights reserved.</p>
-                        <p class="mt-2 md:mt-0">Powered by Edu-Portal Enterprise V26</p>
+                        <p class="mt-2 md:mt-0">Powered by Edu-Portal Enterprise V26.4</p>
                     </div>
                 </footer>
 
@@ -1012,10 +1019,14 @@
                 const sources = ref([]); 
                 const articlesRaw = ref([]);
                 
+                // PERBAIKAN 1: Computed Articles dengan Safe ID & Null Check
                 const articles = computed(() => articlesRaw.value.map(a => {
                     let parsedMeta = {};
                     try { if(a.metaData) parsedMeta = JSON.parse(a.metaData); } catch(e) {}
-                    return { ...a, metaDataObj: parsedMeta };
+                    
+                    // Normalisasi ID secara agresif agar kebal dari tipe data/header yang berbeda di G-Sheets
+                    const safeId = a.id || a.ID || a.Id || a.id_artikel || a.id_berita;
+                    return { ...a, id: safeId, metaDataObj: parsedMeta };
                 }));
 
                 const activeArticle = ref(null);
@@ -1025,7 +1036,7 @@
                 const cmsForm = ref({ type: 'berita', galleryUrls: [] });
                 const editorMeta = ref({});
                 const cmsFilterType = ref('All');
-                const draftSavedAt = ref(null); // Indikator draf
+                const draftSavedAt = ref(null); 
                 
                 const settingsForm = ref({ sources: [], menus: [], appFooterText: '' });
                 const newSourceUrl = ref('');
@@ -1070,9 +1081,8 @@
                     const params = new URLSearchParams(qs);
                     
                     if (path === 'article') {
-                        // PERBAIKAN 1: Gunakan String() untuk menyamakan tipe data ID (mencegah bug Angka vs Teks)
                         const id = params.get('id'); 
-                        activeArticle.value = articles.value.find(a => String(a.id) === String(id)) || null;
+                        activeArticle.value = articles.value.find(a => String(a.id).trim() === String(id).trim()) || null;
                     } else if (path === 'viewer') {
                         const src = params.get('src'); const tab = params.get('tab');
                         if (src && tab) { 
@@ -1083,13 +1093,16 @@
                             }
                         }
                     } else if (path === 'settings') {
-                        // PERBAIKAN 2: Pastikan form settings selalu terkonversi menjadi Array agar tombol Tambah tidak Error
                         settingsForm.value.sources = Array.isArray(sources.value) ? JSON.parse(JSON.stringify(sources.value)) : [];
                         
+                        // PERBAIKAN 2: Penanganan Strict Array untuk Menu Navigasi
                         let parsedMenus = appConfig.value.menus;
-                        if (typeof parsedMenus === 'string') { try { parsedMenus = JSON.parse(parsedMenus); } catch(e) { parsedMenus = []; } }
-                        settingsForm.value.menus = Array.isArray(parsedMenus) ? JSON.parse(JSON.stringify(parsedMenus)) : [];
+                        if (typeof parsedMenus === 'string') { 
+                            try { parsedMenus = JSON.parse(parsedMenus); } catch(e) { parsedMenus = []; } 
+                        }
+                        if (!Array.isArray(parsedMenus)) { parsedMenus = []; }
                         
+                        settingsForm.value.menus = JSON.parse(JSON.stringify(parsedMenus));
                         settingsForm.value.appFooterText = appConfig.value.appFooterText || '';
                     } else if (path === 'cms-editor' && !cmsForm.value.id && !cmsForm.value.type) {
                         openEditor(null); 
@@ -1121,9 +1134,14 @@
                             isGlobalLoading.value = false;
                             if(res && res.success) {
                                 appConfig.value = res.config || appConfig.value;
-                                if(typeof appConfig.value.menus === 'string') {
-                                    try { appConfig.value.menus = JSON.parse(appConfig.value.menus); } catch(e) { appConfig.value.menus = []; }
+                                
+                                // Pastikan menus selalu diset minimal jadi array kosong agar sistem Vue tidak macet
+                                let cfgMenus = appConfig.value.menus;
+                                if(typeof cfgMenus === 'string') {
+                                    try { cfgMenus = JSON.parse(cfgMenus); } catch(e) { cfgMenus = []; }
                                 }
+                                appConfig.value.menus = Array.isArray(cfgMenus) ? cfgMenus : [];
+                                
                                 sources.value = res.sources || []; 
                                 articlesRaw.value = res.articles || [];
                                 parseHash();
@@ -1196,7 +1214,6 @@
                         editorMeta.value = {};
                         cmsForm.value = { id: null, type: 'berita', title: '', content: '', imageUrl: '', category: '', visibility: 'public', author: currentUser.value?.username || 'Admin', date: new Date().toISOString().split('T')[0], tags: '', embedCode: '', redirectUrl: '', galleryUrls: [''] };
                         
-                        // Cek Draf Lokal
                         let draft = localStorage.getItem('edu_draft_content');
                         if (draft && confirm("Ditemukan draf tulisan yang belum disimpan. Ingin memulihkan draf ini?")) {
                             cmsForm.value.content = draft;
@@ -1206,13 +1223,10 @@
                     }
                     navigate('cms-editor');
                     
-                    // PERBAIKAN: Gunakan setTimeout (400ms) untuk menunggu animasi Vue transition (fade) selesai.
-                    // Jika elemen dipanggil terlalu cepat, kotak editor tidak akan ter-render.
                     setTimeout(() => {
                         const wrapper = document.getElementById('editor-wrapper');
                         if (wrapper && typeof Quill !== 'undefined') {
                             
-                            // Reset elemen penampung agar bersih dari instance sebelumnya
                             wrapper.innerHTML = '<div id="quill-editor" class="bg-white"></div>';
                             
                             quillInstance = new Quill('#quill-editor', {
@@ -1227,7 +1241,6 @@
                                             ['link', 'image'], 
                                             ['clean'] 
                                         ],
-                                        // OPSI A: Custom Handler Image untuk mencegah Base64
                                         handlers: {
                                             image: function() {
                                                 var range = this.quill.getSelection();
@@ -1241,7 +1254,6 @@
                                 }
                             });
                             
-                            // OPSI A: Cegah Paste / Drop Gambar Langsung (Base64)
                             quillInstance.root.addEventListener('drop', (e) => {
                                 if(e.dataTransfer.files && e.dataTransfer.files.length) {
                                     e.preventDefault();
@@ -1251,7 +1263,6 @@
 
                             quillInstance.on('text-change', () => { 
                                 cmsForm.value.content = quillInstance.root.innerHTML; 
-                                // Auto Save Draf (Hanya untuk entri baru)
                                 if (!cmsForm.value.id) {
                                     localStorage.setItem('edu_draft_content', cmsForm.value.content);
                                     const now = new Date();
@@ -1261,7 +1272,7 @@
                             
                             quillInstance.root.innerHTML = cmsForm.value.content || '';
                         }
-                    }, 400); // <-- Delay 400ms ditempatkan di sini
+                    }, 400); 
                 };
 
                 const saveCmsArticle = () => {
@@ -1269,7 +1280,6 @@
                     if(quillInstance && !['Galeri'].includes(cmsForm.value.type)) {
                         cmsForm.value.content = quillInstance.root.innerHTML;
                         
-                        // Pembuatan Smart Excerpt (Ringkasan Cerdas)
                         let plainText = quillInstance.getText().trim().replace(/&nbsp;/g, ' ');
                         editorMeta.value.excerpt = plainText.length > 120 ? plainText.substring(0, 120) + '...' : plainText;
                     }
@@ -1282,7 +1292,7 @@
                         fetchGasApi('saveArticle', { payloadData }).then(res => {
                             isActionLoading.value = false;
                             if(res.success) { 
-                                if(!cmsForm.value.id) localStorage.removeItem('edu_draft_content'); // Hapus draf jika berhasil
+                                if(!cmsForm.value.id) localStorage.removeItem('edu_draft_content'); 
                                 navigate('cms'); loadGlobalData(); showToast('Tersimpan!'); 
                             }
                             else showToast(res.error, 'error');
@@ -1345,8 +1355,11 @@
                 // SETTINGS LOGIC 
                 const saveSettings = () => {
                     isActionLoading.value = true;
-                    // PERBAIKAN 3: Filter data menu secara lebih ketat untuk menghindari error saat simpan
-                    const validMenus = settingsForm.value.menus.filter(m => m && m.label && m.label.trim() !== '');
+                    
+                    // PERBAIKAN 3: Aman saat filter menu Array
+                    let currentMenus = settingsForm.value.menus;
+                    if (!Array.isArray(currentMenus)) { currentMenus = []; }
+                    const validMenus = currentMenus.filter(m => m && m.label && String(m.label).trim() !== '');
                     
                     if(GAS_API_URL) {
                         const payloadConfig = { 
