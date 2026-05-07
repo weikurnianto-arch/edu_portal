@@ -1070,7 +1070,9 @@
                     const params = new URLSearchParams(qs);
                     
                     if (path === 'article') {
-                        const id = params.get('id'); activeArticle.value = articles.value.find(a => a.id === id) || null;
+                        // PERBAIKAN 1: Gunakan String() untuk menyamakan tipe data ID (mencegah bug Angka vs Teks)
+                        const id = params.get('id'); 
+                        activeArticle.value = articles.value.find(a => String(a.id) === String(id)) || null;
                     } else if (path === 'viewer') {
                         const src = params.get('src'); const tab = params.get('tab');
                         if (src && tab) { 
@@ -1081,8 +1083,13 @@
                             }
                         }
                     } else if (path === 'settings') {
-                        settingsForm.value.sources = JSON.parse(JSON.stringify(sources.value || []));
-                        settingsForm.value.menus = JSON.parse(JSON.stringify(appConfig.value.menus || []));
+                        // PERBAIKAN 2: Pastikan form settings selalu terkonversi menjadi Array agar tombol Tambah tidak Error
+                        settingsForm.value.sources = Array.isArray(sources.value) ? JSON.parse(JSON.stringify(sources.value)) : [];
+                        
+                        let parsedMenus = appConfig.value.menus;
+                        if (typeof parsedMenus === 'string') { try { parsedMenus = JSON.parse(parsedMenus); } catch(e) { parsedMenus = []; } }
+                        settingsForm.value.menus = Array.isArray(parsedMenus) ? JSON.parse(JSON.stringify(parsedMenus)) : [];
+                        
                         settingsForm.value.appFooterText = appConfig.value.appFooterText || '';
                     } else if (path === 'cms-editor' && !cmsForm.value.id && !cmsForm.value.type) {
                         openEditor(null); 
@@ -1338,20 +1345,27 @@
                 // SETTINGS LOGIC 
                 const saveSettings = () => {
                     isActionLoading.value = true;
+                    // PERBAIKAN 3: Filter data menu secara lebih ketat untuk menghindari error saat simpan
+                    const validMenus = settingsForm.value.menus.filter(m => m && m.label && m.label.trim() !== '');
+                    
                     if(GAS_API_URL) {
                         const payloadConfig = { 
                             sources: settingsForm.value.sources, 
-                            menus: JSON.stringify(settingsForm.value.menus.filter(m => m.label && m.label.trim()!=='')),
+                            menus: JSON.stringify(validMenus),
                             appFooterText: settingsForm.value.appFooterText
                         };
                         fetchGasApi('saveAppConfig', { payloadData: payloadConfig }).then(res => {
                             isActionLoading.value = false;
                             if(res.success) { loadGlobalData(); showToast('Konfigurasi Tersimpan'); }
+                            else { showToast('Gagal: ' + (res.error || 'Terjadi kesalahan sistem'), 'error'); }
+                        }).catch(e => {
+                            isActionLoading.value = false; 
+                            showToast('Gagal terhubung ke database', 'error');
                         });
                     } else {
                         setTimeout(() => { 
                             isActionLoading.value = false; 
-                            appConfig.value.menus = JSON.parse(JSON.stringify(settingsForm.value.menus.filter(m => m.label && m.label.trim() !== '')));
+                            appConfig.value.menus = JSON.parse(JSON.stringify(validMenus));
                             appConfig.value.appFooterText = settingsForm.value.appFooterText;
                             showToast('Simpan Lokal Berhasil (UI Diperbarui)'); 
                         }, 500);
