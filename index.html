@@ -506,7 +506,13 @@
                             <div v-else class="text-center p-16 edu-card mt-10 border-dashed border-2 border-slate-200">
                                 <i class="ph-fill ph-warning-circle text-6xl text-slate-300 mb-5 inline-block"></i>
                                 <h3 class="text-2xl font-extrabold text-slate-700 mb-2">Data Tidak Ditemukan</h3>
-                                <p class="text-sm text-slate-500 mb-8 max-w-md mx-auto">Artikel yang Anda cari mungkin telah dihapus, dipindahkan, atau sistem gagal mencocokkan referensi ID dari pangkalan data.</p>
+                                <p class="text-sm text-slate-500 mb-6 max-w-md mx-auto">
+                                    Artikel yang Anda cari mungkin telah dihapus, dipindahkan, atau sistem gagal mencocokkan referensi ID.
+                                </p>
+                                <div class="text-[10px] text-edu-700 font-bold bg-edu-50 p-3 rounded-xl max-w-sm mx-auto mb-8 border border-edu-100 shadow-sm">
+                                    <i class="ph-bold ph-info text-base mb-1 block"></i>
+                                    Tips Admin: Pastikan di dalam database Google Sheets Anda terdapat header kolom yang bernama tepat <strong>id</strong> (huruf kecil).
+                                </div>
                                 <button @click="navigate('home')" class="edu-btn edu-btn-primary py-3 px-6"><i class="ph-bold ph-arrow-left mr-2"></i> Kembali ke Halaman Utama</button>
                             </div>
                         </div>
@@ -1019,13 +1025,15 @@
                 const sources = ref([]); 
                 const articlesRaw = ref([]);
                 
-                // PERBAIKAN 1: Computed Articles dengan Safe ID & Null Check
-                const articles = computed(() => articlesRaw.value.map(a => {
+                // PERBAIKAN 1: Computed Articles dengan Safe ID & Automatic Fallback
+                const articles = computed(() => articlesRaw.value.map((a, index) => {
                     let parsedMeta = {};
                     try { if(a.metaData) parsedMeta = JSON.parse(a.metaData); } catch(e) {}
                     
-                    // Normalisasi ID secara agresif agar kebal dari tipe data/header yang berbeda di G-Sheets
-                    const safeId = a.id || a.ID || a.Id || a.id_artikel || a.id_berita;
+                    // Normalisasi ID secara agresif. 
+                    // JIKA di Google Sheets tidak ada kolom ID, otomatis gunakan Judul (title) atau Urutan Baris (index) agar tetap bisa diklik.
+                    const safeId = a.id || a.ID || a.Id || a.id_artikel || a.id_berita || a.title || `doc-${index}`;
+                    
                     return { ...a, id: safeId, metaDataObj: parsedMeta };
                 }));
 
