@@ -9,14 +9,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- Quill.js Rich Text Editor (Diubah: tanpa defer agar pasti termuat sebelum Vue) -->
+    <!-- Quill.js Rich Text Editor -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
     
     <!-- CDN SCRIPT -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Penambahan plugin Typography untuk styling artikel otomatis -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
+    <!-- DOMPurify untuk Keamanan Anti-XSS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.3/purify.min.js"></script>
     
     <script>
         tailwind.config = { 
@@ -267,7 +270,7 @@
                                         <div class="absolute bottom-10 left-8 right-8 md:bottom-16 md:left-16 md:right-16 z-20">
                                             <span v-if="slide.category" class="inline-block px-3 py-1 bg-edu-500 text-white text-[10px] font-bold rounded-md uppercase tracking-widest mb-3 shadow-lg">{{ slide.category }}</span>
                                             <h2 class="text-3xl md:text-5xl font-black text-white leading-tight drop-shadow-lg mb-4 max-w-3xl">{{ slide.title }}</h2>
-                                            <p v-if="slide.content" class="text-slate-200 text-sm md:text-base max-w-2xl line-clamp-2 drop-shadow-md hidden sm:block" v-html="slide.content.replace(/<[^>]*>?/gm, '')"></p>
+                                            <p v-if="slide.content" class="text-slate-200 text-sm md:text-base max-w-2xl line-clamp-2 drop-shadow-md hidden sm:block" v-html="DOMPurify.sanitize(slide.content.replace(/<[^>]*>?/gm, ''))"></p>
                                         </div>
                                     </div>
                                 </transition-group>
@@ -290,7 +293,7 @@
                                         </div>
                                         <h3 class="font-extrabold text-slate-800 text-lg">{{ kepsekData.title }}</h3>
                                         <p class="text-[10px] text-edu-600 font-bold uppercase tracking-widest mb-4 mt-1">{{ kepsekData.metaDataObj?.jabatan || 'Kepala Lembaga' }}</p>
-                                        <div class="text-sm text-slate-600 leading-relaxed italic line-clamp-4 font-medium" v-html="kepsekData.content"></div>
+                                        <div class="text-sm text-slate-600 leading-relaxed italic line-clamp-4 font-medium" v-html="DOMPurify.sanitize(kepsekData.content)"></div>
                                         <button @click="openArticle(kepsekData.id)" class="mt-5 text-xs font-bold text-slate-800 border-b-2 border-edu-500 pb-0.5 hover:text-edu-600 transition-colors">Profil Lengkap</button>
                                     </div>
 
@@ -327,7 +330,7 @@
                                             <div class="px-2 pb-2 flex-1 flex flex-col">
                                                 <p class="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-2">{{ berita.date }}</p>
                                                 <h3 class="font-extrabold text-slate-800 leading-snug line-clamp-2 mb-2 group-hover:text-edu-600 transition-colors">{{ berita.title }}</h3>
-                                                <p class="text-xs text-slate-500 line-clamp-2 font-medium leading-relaxed">{{ String(berita.content).replace(/<[^>]*>?/gm, '') }}</p>
+                                                <p class="text-xs text-slate-500 line-clamp-2 font-medium leading-relaxed">{{ berita.metaDataObj?.excerpt || String(berita.content).replace(/<[^>]*>?/gm, '').substring(0,120) + '...' }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -350,7 +353,7 @@
                                         <div class="p-5">
                                             <p class="text-[10px] font-bold text-edu-600 uppercase tracking-widest mb-1">{{ prestasi.date }}</p>
                                             <h4 class="font-extrabold text-slate-800 text-base mb-2 line-clamp-2">{{ prestasi.title }}</h4>
-                                            <p class="text-xs text-slate-500 line-clamp-2 font-medium">{{ String(prestasi.content).replace(/<[^>]*>?/gm, '') }}</p>
+                                            <p class="text-xs text-slate-500 line-clamp-2 font-medium">{{ prestasi.metaDataObj?.excerpt || String(prestasi.content).replace(/<[^>]*>?/gm, '').substring(0,120) + '...' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -380,7 +383,7 @@
                                     <div class="flex flex-col lg:flex-row gap-8 items-center">
                                         <div class="w-full lg:w-1/3 text-center lg:text-left">
                                             <h2 class="text-2xl md:text-3xl font-extrabold mb-4">{{ videoItems[0].title }}</h2>
-                                            <p class="text-slate-300 text-sm mb-6 leading-relaxed line-clamp-4" v-html="videoItems[0].content"></p>
+                                            <p class="text-slate-300 text-sm mb-6 leading-relaxed line-clamp-4" v-html="DOMPurify.sanitize(videoItems[0].content)"></p>
                                             <span class="inline-block px-4 py-2 bg-white/10 rounded-lg text-xs font-bold uppercase tracking-wider"><i class="ph-fill ph-play-circle text-edu-400 mr-2"></i> Highlight Video</span>
                                         </div>
                                         <div class="w-full lg:w-2/3">
@@ -421,7 +424,7 @@
                                     <div v-for="testi in testimoniItems" :key="testi.id" class="snap-center shrink-0 w-[85vw] sm:w-[400px] edu-card p-8 flex flex-col justify-between border-slate-200/60 shadow-sm" @click="openArticle(testi.id)">
                                         <div class="cursor-pointer">
                                             <i class="ph-fill ph-quotes text-4xl text-edu-100 mb-4 inline-block"></i>
-                                            <div class="text-sm text-slate-600 italic leading-relaxed font-medium mb-6 line-clamp-5" v-html="testi.content"></div>
+                                            <div class="text-sm text-slate-600 italic leading-relaxed font-medium mb-6 line-clamp-5" v-html="DOMPurify.sanitize(testi.content)"></div>
                                         </div>
                                         <div class="flex items-center gap-4 pt-4 border-t border-slate-100">
                                             <img :src="testi.imageUrl || getGalleryCover(testi) || 'https://placehold.co/100x100/e2e8f0/64748b?text=U'" class="w-12 h-12 rounded-full object-cover">
@@ -486,7 +489,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Galeri Repeater Display (Card Layout Hasil di Publik) -->
+                                <!-- Galeri Repeater Display -->
                                 <div v-if="['Galeri', 'fasilitas', 'testimoni', 'prestasi'].includes(activeArticle.type) && getParsedGallery(activeArticle).length > 0" class="mb-8">
                                     <h3 class="font-bold text-slate-800 mb-4 text-sm uppercase tracking-widest border-b border-slate-100 pb-2">Lampiran Media</h3>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -496,8 +499,8 @@
                                     </div>
                                 </div>
 
-                                <!-- Isi Konten / Prakata -->
-                                <div class="ql-editor p-0 text-slate-700 text-lg" v-html="activeArticle.content"></div>
+                                <!-- Isi Konten / Prakata (Di-sanitize dengan DOMPurify dan dipoles dengan Tailwind Typography 'prose') -->
+                                <div class="prose prose-slate lg:prose-lg max-w-none prose-headings:font-extrabold prose-a:text-edu-600 hover:prose-a:text-edu-700 text-slate-700" v-html="DOMPurify.sanitize(activeArticle.content)"></div>
                             </div>
                         </div>
 
@@ -661,17 +664,7 @@
                                         <input v-model="cmsForm.title" type="text" placeholder="Tambahkan Judul..." class="wp-title-input">
                                     </div>
 
-                                    <!-- 3. Editor Teks Luas (Area Menulis Kaya) -->
-                                    <div v-show="!['Galeri'].includes(cmsForm.type)">
-                                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1 mt-2">
-                                            {{ cmsForm.type === 'kepala_sekolah' ? 'Prakata / Sambutan Kepala Sekolah' : 'Area Menulis (Isi Konten Detail)' }}
-                                        </label>
-                                        <div class="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-                                            <div id="quill-editor" class="bg-white"></div>
-                                        </div>
-                                    </div>
-
-                                    <!-- 4. Dynamic Meta Boxes (Atribut Khusus Bawah Editor) -->
+                                    <!-- 3. Dynamic Meta Boxes (Atribut Khusus Bawah Judul) -->
                                     <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 mt-6 shadow-sm">
                                         <h3 class="text-sm font-extrabold text-slate-800 mb-5 flex items-center gap-2"><i class="ph-fill ph-faders text-edu-500 text-lg"></i> Atribut Data Spesifik</h3>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -763,7 +756,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- 5. REPEATER KOLOM URL / MEDIA (CARD LAYOUT DINAMIS) -->
+                                    <!-- 4. REPEATER KOLOM URL / MEDIA (CARD LAYOUT DINAMIS) -->
                                     <div v-show="['Galeri', 'fasilitas', 'testimoni', 'prestasi'].includes(cmsForm.type)" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mt-6">
                                         <div class="mb-5">
                                             <h3 class="text-sm font-extrabold text-slate-800 flex items-center gap-2"><i class="ph-fill ph-images text-edu-500 text-xl"></i> Tambahan Data Media (URL Ekstra)</h3>
@@ -792,6 +785,39 @@
                                             <i class="ph-bold ph-plus-circle text-base"></i> Tambah Kolom Lampiran Media
                                         </button>
                                     </div>
+
+                                    <!-- 5. Editor Teks Luas (Area Menulis Kaya - BOX EDITORIAL) -->
+                                    <div v-show="!['Galeri'].includes(cmsForm.type)" class="mt-8 pt-6 border-t border-slate-200/80">
+                                        <!-- Header Box Editorial -->
+                                        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+                                            <label class="text-xs font-extrabold text-slate-500 uppercase tracking-widest flex items-center gap-2 ml-1">
+                                                <i class="ph-fill ph-textbox text-edu-500 text-xl"></i> 
+                                                {{ cmsForm.type === 'kepala_sekolah' ? 'Prakata / Sambutan Kepala Sekolah' : 'Box Editorial (Area Menulis)' }}
+                                            </label>
+                                            
+                                            <!-- Indikator Auto-Save -->
+                                            <transition name="fade">
+                                                <span v-if="draftSavedAt" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1.5 rounded-md uppercase tracking-wide flex items-center gap-1.5 w-max border border-emerald-100 shadow-sm">
+                                                    <i class="ph-bold ph-cloud-check text-base"></i> Draf Tersimpan {{ draftSavedAt }}
+                                                </span>
+                                            </transition>
+                                        </div>
+
+                                        <!-- Wrapper Editor Aktual -->
+                                        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden focus-within:border-edu-500 focus-within:ring-4 focus-within:ring-edu-500/15 transition-all duration-300 shadow-sm" id="editor-wrapper">
+                                            <div id="quill-editor" class="bg-white"></div>
+                                        </div>
+
+                                        <!-- Catatan Kaki Editor -->
+                                        <div class="mt-4 flex items-start gap-2 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                                            <i class="ph-fill ph-info text-slate-400 text-lg shrink-0 mt-0.5"></i>
+                                            <p class="text-[10px] text-slate-500 font-medium leading-relaxed">
+                                                <strong class="text-slate-700">Panduan Redaksi:</strong> Gunakan toolbar di atas untuk menebalkan teks, membuat daftar, atau menyisipkan tautan (<em>link</em>). 
+                                                Untuk gambar, klik ikon <i class="ph-bold ph-image inline text-slate-700"></i> lalu tempel URL publik gambar tersebut. Mengunggah/Drag-and-Drop langsung dari perangkat telah dinonaktifkan untuk menjaga stabilitas memori database (mencegah bloat Base64).
+                                            </p>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
 
@@ -941,7 +967,7 @@
                     </div>
                     <div class="max-w-7xl mx-auto border-t border-slate-800 mt-10 pt-6 text-center md:text-left flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 font-medium">
                         <p>&copy; {{ new Date().getFullYear() }} {{ identitasLembaga.nama }}. All rights reserved.</p>
-                        <p class="mt-2 md:mt-0">Powered by Edu-Portal Enterprise V25.1</p>
+                        <p class="mt-2 md:mt-0">Powered by Edu-Portal Enterprise V26</p>
                     </div>
                 </footer>
 
@@ -953,7 +979,7 @@
     <script>
         const { createApp, ref, computed, onMounted, watch, nextTick } = Vue;
 
-        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyy5QjiHpZmQxre8Qh9o84WH0V5TqcTN4xybGke2B8MxFeVInRFZvrhD8lDozOBGmOe/exec'; // MASUKKAN URL WEB APP GAS V21/V25 ANDA DI SINI
+        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyy5QjiHpZmQxre8Qh9o84WH0V5TqcTN4xybGke2B8MxFeVInRFZvrhD8lDozOBGmOe/exec'; // MASUKKAN URL WEB APP GAS V21/V26 ANDA DI SINI
 
         createApp({
             setup() {
@@ -999,6 +1025,7 @@
                 const cmsForm = ref({ type: 'berita', galleryUrls: [] });
                 const editorMeta = ref({});
                 const cmsFilterType = ref('All');
+                const draftSavedAt = ref(null); // Indikator draf
                 
                 const settingsForm = ref({ sources: [], menus: [], appFooterText: '' });
                 const newSourceUrl = ref('');
@@ -1147,6 +1174,7 @@
                 };
 
                 const openEditor = (article = null) => {
+                    draftSavedAt.value = null;
                     if (article) {
                         editorMeta.value = JSON.parse(JSON.stringify(article.metaDataObj || {}));
                         let parsedUrls = [''];
@@ -1160,39 +1188,83 @@
                     } else {
                         editorMeta.value = {};
                         cmsForm.value = { id: null, type: 'berita', title: '', content: '', imageUrl: '', category: '', visibility: 'public', author: currentUser.value?.username || 'Admin', date: new Date().toISOString().split('T')[0], tags: '', embedCode: '', redirectUrl: '', galleryUrls: [''] };
+                        
+                        // Cek Draf Lokal
+                        let draft = localStorage.getItem('edu_draft_content');
+                        if (draft && confirm("Ditemukan draf tulisan yang belum disimpan. Ingin memulihkan draf ini?")) {
+                            cmsForm.value.content = draft;
+                            const now = new Date();
+                            draftSavedAt.value = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+                        }
                     }
                     navigate('cms-editor');
                     
-                    nextTick(() => {
-                        const editorEl = document.getElementById('quill-editor');
-                        if (editorEl && typeof Quill !== 'undefined') {
+                    // PERBAIKAN: Gunakan setTimeout (400ms) untuk menunggu animasi Vue transition (fade) selesai.
+                    // Jika elemen dipanggil terlalu cepat, kotak editor tidak akan ter-render.
+                    setTimeout(() => {
+                        const wrapper = document.getElementById('editor-wrapper');
+                        if (wrapper && typeof Quill !== 'undefined') {
                             
-                            // Hapus instance/toolbar lama secara paksa jika ada sisa dari navigasi sebelumnya
-                            const parent = editorEl.parentElement;
-                            const oldToolbars = parent.querySelectorAll('.ql-toolbar');
-                            oldToolbars.forEach(tb => tb.remove());
+                            // Reset elemen penampung agar bersih dari instance sebelumnya
+                            wrapper.innerHTML = '<div id="quill-editor" class="bg-white"></div>';
                             
-                            // Bersihkan isi HTML elemen dan atur ulang class-nya
-                            editorEl.innerHTML = '';
-                            editorEl.className = 'bg-white';
-                            
-                            // Inisialisasi ulang Quill dengan pasti
-                            quillInstance = new Quill(editorEl, {
+                            quillInstance = new Quill('#quill-editor', {
                                 theme: 'snow', 
                                 placeholder: 'Mulai menulis di area editor konten ini...',
-                                modules: { toolbar: [ [{ 'header': [1, 2, 3, false] }], ['bold', 'italic', 'underline'], [{'list': 'ordered'}, {'list': 'bullet'}], ['link', 'image'], ['clean'] ] }
+                                modules: { 
+                                    toolbar: {
+                                        container: [ 
+                                            [{ 'header': [1, 2, 3, false] }], 
+                                            ['bold', 'italic', 'underline'], 
+                                            [{'list': 'ordered'}, {'list': 'bullet'}], 
+                                            ['link', 'image'], 
+                                            ['clean'] 
+                                        ],
+                                        // OPSI A: Custom Handler Image untuk mencegah Base64
+                                        handlers: {
+                                            image: function() {
+                                                var range = this.quill.getSelection();
+                                                var value = prompt('Masukkan URL gambar (Misal: dari Google Drive / ImageKit):');
+                                                if(value){
+                                                    this.quill.insertEmbed(range.index, 'image', value, Quill.sources.USER);
+                                                }
+                                            }
+                                        }
+                                    } 
+                                }
                             });
                             
-                            quillInstance.on('text-change', () => { cmsForm.value.content = quillInstance.root.innerHTML; });
+                            // OPSI A: Cegah Paste / Drop Gambar Langsung (Base64)
+                            quillInstance.root.addEventListener('drop', (e) => {
+                                if(e.dataTransfer.files && e.dataTransfer.files.length) {
+                                    e.preventDefault();
+                                    alert('Peringatan: Tarik-lepas (Drag & Drop) file gambar dinonaktifkan! Silakan gunakan ikon Gambar di toolbar untuk memasukkan URL gambar.');
+                                }
+                            }, false);
+
+                            quillInstance.on('text-change', () => { 
+                                cmsForm.value.content = quillInstance.root.innerHTML; 
+                                // Auto Save Draf (Hanya untuk entri baru)
+                                if (!cmsForm.value.id) {
+                                    localStorage.setItem('edu_draft_content', cmsForm.value.content);
+                                    const now = new Date();
+                                    draftSavedAt.value = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+                                }
+                            });
+                            
                             quillInstance.root.innerHTML = cmsForm.value.content || '';
                         }
-                    });
+                    }, 400); // <-- Delay 400ms ditempatkan di sini
                 };
 
                 const saveCmsArticle = () => {
                     isActionLoading.value = true;
                     if(quillInstance && !['Galeri'].includes(cmsForm.value.type)) {
                         cmsForm.value.content = quillInstance.root.innerHTML;
+                        
+                        // Pembuatan Smart Excerpt (Ringkasan Cerdas)
+                        let plainText = quillInstance.getText().trim().replace(/&nbsp;/g, ' ');
+                        editorMeta.value.excerpt = plainText.length > 120 ? plainText.substring(0, 120) + '...' : plainText;
                     }
                     
                     const payloadData = JSON.parse(JSON.stringify(cmsForm.value));
@@ -1202,11 +1274,18 @@
                     if(GAS_API_URL) {
                         fetchGasApi('saveArticle', { payloadData }).then(res => {
                             isActionLoading.value = false;
-                            if(res.success) { navigate('cms'); loadGlobalData(); showToast('Tersimpan!'); }
+                            if(res.success) { 
+                                if(!cmsForm.value.id) localStorage.removeItem('edu_draft_content'); // Hapus draf jika berhasil
+                                navigate('cms'); loadGlobalData(); showToast('Tersimpan!'); 
+                            }
                             else showToast(res.error, 'error');
                         }).catch(e => { isActionLoading.value = false; showToast('Gagal Simpan', 'error'); });
                     } else {
-                        setTimeout(() => { isActionLoading.value = false; navigate('cms'); showToast('Tersimpan (Mock)'); }, 500);
+                        setTimeout(() => { 
+                            isActionLoading.value = false; 
+                            if(!cmsForm.value.id) localStorage.removeItem('edu_draft_content');
+                            navigate('cms'); showToast('Tersimpan (Mock)'); 
+                        }, 500);
                     }
                 };
 
@@ -1262,7 +1341,7 @@
                     if(GAS_API_URL) {
                         const payloadConfig = { 
                             sources: settingsForm.value.sources, 
-                            menus: JSON.stringify(settingsForm.value.menus.filter(m => m.label.trim()!=='')),
+                            menus: JSON.stringify(settingsForm.value.menus.filter(m => m.label && m.label.trim()!=='')),
                             appFooterText: settingsForm.value.appFooterText
                         };
                         fetchGasApi('saveAppConfig', { payloadData: payloadConfig }).then(res => {
@@ -1270,7 +1349,12 @@
                             if(res.success) { loadGlobalData(); showToast('Konfigurasi Tersimpan'); }
                         });
                     } else {
-                        setTimeout(() => { isActionLoading.value = false; showToast('Mock Simpan OK'); }, 500);
+                        setTimeout(() => { 
+                            isActionLoading.value = false; 
+                            appConfig.value.menus = JSON.parse(JSON.stringify(settingsForm.value.menus.filter(m => m.label && m.label.trim() !== '')));
+                            appConfig.value.appFooterText = settingsForm.value.appFooterText;
+                            showToast('Simpan Lokal Berhasil (UI Diperbarui)'); 
+                        }, 500);
                     }
                 };
                 
@@ -1290,7 +1374,7 @@
                     isGlobalLoading, isActionLoading, isMobileMenuOpen, currentUser, route, navigate, handleNavClick, toast,
                     articles, identitasLembaga, kepsekData, beritaItems, agendaItems, guruItems, fasilitasItems, sliderItems, videoItems, galeriItems, testimoniItems, prestasiItems, mockSlider,
                     filteredCmsArticles, cmsFilterType, cmsForm, editorMeta, openEditor, setDefaultEditorMeta, saveCmsArticle, deleteArticle, openArticle, getParsedGallery, getGalleryCover,
-                    loginForm, handleLogin, handleLogout,
+                    loginForm, handleLogin, handleLogout, draftSavedAt, DOMPurify,
                     sources, viewerForm, viewerState, viewerPaginated, viewerFiltered, viewerTotalPages, viewerSort, debounceSearch, handleViewerDropdownChange,
                     settingsForm, newSourceUrl, saveSettings, verifySourceUrl,
                     currentSlide, nextSlide, prevSlide, setSlide, pauseSlider, startSlider, handleTouchStart, handleTouchMove, handleTouchEnd, appConfig
